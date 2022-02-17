@@ -1,0 +1,33 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="reflab.plone.qa">
+
+  -*- extra stuff goes here -*-
+
+  <browser:page
+    name="view"
+    for="..content.qa_folder.IQaFolder"
+    class=".qa_folder.QAFolderView"
+    template="qa_folder.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="view"
+    for="..content.qa_question.IQaQuestion"
+    class=".qa_question.QAQuestionView"
+    template="qa_question.pt"
+    permission="zope2.View"
+    />
+
+  <browser:page
+    name="view"
+    for="..content.qa_answer.IQaAnswer"
+    class=".qa_answer.QAAnswerView"
+    template="qa_answer.pt"
+    permission="zope2.View"
+    />
+
+</configure>
