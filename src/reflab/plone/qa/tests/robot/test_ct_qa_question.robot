@@ -1,0 +1,86 @@
+# ============================================================================
+# DEXTERITY ROBOT TESTS
+# ============================================================================
+#
+# Run this robot test stand-alone:
+#
+#  $ bin/test -s reflab.plone.qa -t test_qa_question.robot --all
+#
+# Run this robot test with robot server (which is faster):
+#
+# 1) Start robot server:
+#
+# $ bin/robot-server --reload-path src reflab.plone.qa.testing.REFLAB_PLONE_QA_ACCEPTANCE_TESTING
+#
+# 2) Run robot tests:
+#
+# $ bin/robot /src/reflab/plone/qa/tests/robot/test_qa_question.robot
+#
+# See the http://docs.plone.org for further details (search for robot
+# framework).
+#
+# ============================================================================
+
+*** Settings *****************************************************************
+
+Resource  plone/app/robotframework/selenium.robot
+Resource  plone/app/robotframework/keywords.robot
+
+Library  Remote  ${PLONE_URL}/RobotRemote
+
+Test Setup  Open test browser
+Test Teardown  Close all browsers
+
+
+*** Test Cases ***************************************************************
+
+Scenario: As a site administrator I can add a qa Question
+  Given a logged-in site administrator
+    and an add qa Folder form
+   When I type 'My qa Question' into the title field
+    and I submit the form
+   Then a qa Question with the title 'My qa Question' has been created
+
+Scenario: As a site administrator I can view a qa Question
+  Given a logged-in site administrator
+    and a qa Question 'My qa Question'
+   When I go to the qa Question view
+   Then I can see the qa Question title 'My qa Question'
+
+
+*** Keywords *****************************************************************
+
+# --- Given ------------------------------------------------------------------
+
+a logged-in site administrator
+  Enable autologin as  Site Administrator
+
+an add qa Folder form
+  Go To  ${PLONE_URL}/++add++qa Folder
+
+a qa Question 'My qa Question'
+  Create content  type=qa Folder  id=my-qa_question  title=My qa Question
+
+# --- WHEN -------------------------------------------------------------------
+
+I type '${title}' into the title field
+  Input Text  name=form.widgets.IBasic.title  ${title}
+
+I submit the form
+  Click Button  Save
+
+I go to the qa Question view
+  Go To  ${PLONE_URL}/my-qa_question
+  Wait until page contains  Site Map
+
+
+# --- THEN -------------------------------------------------------------------
+
+a qa Question with the title '${title}' has been created
+  Wait until page contains  Site Map
+  Page should contain  ${title}
+  Page should contain  Item created
+
+I can see the qa Question title '${title}'
+  Wait until page contains  Site Map
+  Page should contain  ${title}

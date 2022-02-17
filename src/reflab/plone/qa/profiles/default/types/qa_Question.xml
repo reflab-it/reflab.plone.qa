@@ -1,38 +1,37 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="qa Folder"
+    name="qa Question"
     meta_type="Dexterity FTI"
     i18n:domain="reflab.plone.qa">
 
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">qa Folder</property>
+      name="title">qa Question</property>
   <property
       i18n:translate=""
-      name="description">A container of questions with answers</property>
+      name="description"></property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">qa Folder</property>
+  <property name="factory">qa Question</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
   <!-- Hierarchy control -->
-  <property name="global_allow">True</property>
+  <property name="global_allow">False</property>
   <property name="filter_content_types">True</property>
   <property name="allowed_content_types">
-    <element value="qa Question" />
-      <!--
+  <!--
     <element value="Document" />
     <element value="File" />
   -->
   </property>
   <!-- Schema, class and security -->
-  <property name="add_permission">reflab.plone.qa.AddQaFolder</property>
-  <property name="klass">reflab.plone.qa.content.qa_folder.QaFolder</property>
+  <property name="add_permission">reflab.plone.qa.AddQaQuestion</property>
+  <property name="klass">reflab.plone.qa.content.qa_question.QaQuestion</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">reflab.plone.qa.content.qa_folder.IQaFolder</property>
+  <property name="schema">reflab.plone.qa.content.qa_question.IQaQuestion</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
@@ -62,7 +61,7 @@
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++qa Folder</property>
+  <property name="add_view_expr">string:${folder_url}/++add++qa Question</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>
