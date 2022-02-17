@@ -7,6 +7,12 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
+        id="reflab.plone.qa.AddQaAnswer"
+        title="reflab.plone.qa: Add QaAnswer"
+    />
+
+
+    <permission
         id="reflab.plone.qa.AddQaQuestion"
         title="reflab.plone.qa: Add QaQuestion"
     />
