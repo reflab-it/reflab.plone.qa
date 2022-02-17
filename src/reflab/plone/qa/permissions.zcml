@@ -6,6 +6,12 @@
   <configure zcml:condition="installed AccessControl.security">
   <!-- -*- extra stuff goes here -*- -->
 
+    <permission
+        id="reflab.plone.qa.AddQaFolder"
+        title="reflab.plone.qa: Add QaFolder"
+    />
+
+
 
   </configure>
 
