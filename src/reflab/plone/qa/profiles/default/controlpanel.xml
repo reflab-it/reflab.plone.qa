@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<object name="portal_controlpanel">
+  <configlet
+      title="Q&amp;A Settings"
+      action_id="qa-controlpanel"
+      appId="qa-controlpanel"
+      category="Products"
+      condition_expr=""
+      icon_expr=""
+      url_expr="string:${portal_url}/@@qa-controlpanel"
+      visible="True">
+    <permission>Manage portal</permission>
+  </configlet>
+</object>

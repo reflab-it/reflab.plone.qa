@@ -11,6 +11,13 @@
       layer="reflab.plone.qa.interfaces.IReflabPloneQaLayer"
       />
 
+<browser:page
+    name="qa-controlpanel"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    class=".controlpanel.QAControlPanelView"
+    permission="cmf.ManagePortal"
+    />
+
   <!-- Publish static files -->
   <plone:static
       name="reflab.plone"

@@ -3,7 +3,8 @@
     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
     i18n:domain="reflab.plone.qa">
 
-    <records prefix="plone.bundles/reflab.plone.qa" interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+    <records prefix="plone.bundles/reflab.plone.qa"
+        interface='Products.CMFPlone.interfaces.IBundleRegistry'>
         <value key="enabled">True</value>
         <value key="jscompilation">++plone++reflab.plone/qa.js</value>
         <value key="csscompilation">++plone++reflab.plone/qa.css</value>
@@ -11,5 +12,8 @@
         <value key="compile">False</value>
         <value key="depends">jquery</value>
     </records>
+
+    <records interface="reflab.plone.qa.browser.controlpanel.IQAControlPanel"
+        prefix="reflab.plone.qa" />
 
 </registry>
