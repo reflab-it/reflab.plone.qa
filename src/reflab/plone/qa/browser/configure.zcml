@@ -13,7 +13,7 @@
 
   <!-- Publish static files -->
   <plone:static
-      name="reflab.plone.qa"
+      name="reflab.plone"
       type="plone"
       directory="static"
       />

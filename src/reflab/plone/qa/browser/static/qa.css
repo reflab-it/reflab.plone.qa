@@ -1,0 +1,21 @@
+body [class*="contenttype-qa"]::before {
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border: 2px solid currentColor;
+    border-radius: 3px;
+    font-size: 80%;
+    font-weight: bold;
+    line-height: 16px;
+
+}
+
+body .contenttype-qa-folder::before {
+    content: 'QA';
+}
+
+body .contenttype-qa-question::before {
+    content: 'Q?';
+}
+
+body .contenttype-qa-answer::before {
+    content: 'A!';
+}
