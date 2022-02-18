@@ -20,7 +20,7 @@ msgstr ""
 
 #: ./profiles/default/types/qa_Answer.xml
 msgid "Answer"
-msgstr ""
+msgstr "Risposta"
 
 #: ./configure.zcml:27
 msgid "Installs the reflab.plone.qa add-on."
@@ -28,17 +28,17 @@ msgstr ""
 
 #: ./profiles/default/types/qa_Folder.xml
 msgid "Q&A Folder"
-msgstr ""
+msgstr "Cartella Q&A"
 
 #: ./profiles/default/types/qa_Question.xml
 msgid "Question"
-msgstr ""
+msgstr "Domanda"
 
 #: ./content/qa_answer.py:19
 #: ./content/qa_folder.py:18
 #: ./content/qa_question.py:18
 msgid "Text"
-msgstr ""
+msgstr "Testo"
 
 #: ./configure.zcml:36
 msgid "Uninstalls the reflab.plone.qa add-on."
