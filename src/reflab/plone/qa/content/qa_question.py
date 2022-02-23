@@ -14,7 +14,7 @@ class IQaQuestion(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaQuestion
     """
 
-    text = RichText(
+    text = schema.Text(
         title=_(u'Text'),
         required=False
     )

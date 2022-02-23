@@ -19,6 +19,8 @@
   <property name="filter_content_types">True</property>
   <property name="allowed_content_types">
     <element value="qa Answer" />
+    <element value="Image" />
+    <element value="File" />
   </property>
   <property name="add_permission">reflab.plone.qa.AddQaQuestion</property>
   <property name="klass">reflab.plone.qa.content.qa_question.QaQuestion</property>
