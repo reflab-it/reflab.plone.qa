@@ -5,7 +5,7 @@ from plone.dexterity.content import Container
 from plone.supermodel import model
 from zope import schema
 from zope.interface import implementer
-
+from plone.supermodel.directives import fieldset
 
 
 from reflab.plone.qa import _
