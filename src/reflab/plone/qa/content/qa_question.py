@@ -17,8 +17,10 @@ class IQaQuestion(model.Schema):
 
     fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at') )
     fieldset( 'status', label=u'Status', fields=('closed', 'deleted', 'approved'))
-    fieldset( 'points', label=u'Points', fields=('view_count', 'favourite_count', 'answer_count', 'points'))
-
+    fieldset( 'points', label=u'Points', fields=('view_count', 'favourite_count',
+        'answer_count', 'points'))
+    fieldset( 'activity', label=u'Activity', fields=('last_activity_at',
+        'last_activity_by', 'followed_by', 'favorited_by', 'closed_by'))
 
     text = schema.Text( title=_(u'Text'), required=False )
     author = schema.TextLine( title=_(u'Author'), required=False )
@@ -32,6 +34,12 @@ class IQaQuestion(model.Schema):
     favourite_count = schema.Int( title=_(u'favourite_count'), required=False )
     answer_count = schema.Int( title=_(u'answer_count'), required=False )
     points = schema.Int( title=_(u'points'), required=False )
+
+    last_activity_at = schema.Datetime( title =_(u'Last activity at'),required=False )
+    last_activity_by = schema.TextLine( title=_(u'Last activity by'), required=False )
+    followed_by = schema.TextLine( title=_(u'Followed by'), required=False )
+    favorited_by = schema.TextLine( title=_(u'Favorited by'), required=False )
+    closed_by = schema.TextLine( title=_(u'Closed by'), required=False )
 
     tags = schema.List(
         title=u'Tags',
