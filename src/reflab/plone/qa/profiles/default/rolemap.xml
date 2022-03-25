@@ -3,6 +3,14 @@
   <permissions>
   <!-- -*- extra stuff goes here -*- -->
 
+    <permission name="reflab.plone.qa: Add Comment" acquire="True">
+      <role name="Manager"/>
+      <role name="Site Administrator"/>
+      <role name="Owner"/>
+      <role name="Contributor"/>
+    </permission>
+
+
     <permission name="reflab.plone.qa: Add QaAnswer" acquire="True">
       <role name="Manager"/>
       <role name="Site Administrator"/>
