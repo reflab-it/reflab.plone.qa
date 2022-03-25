@@ -25,7 +25,7 @@ class IQaAnswer(model.Schema):
     approved = schema.Bool( title=_(u'Approved'), required=False )
     deleted = schema.Bool( title=_(u'Deleted'), required=False )
     deleted_at = schema.Datetime( title =_(u'Deleted at'),required=False )
-    deleted_by = schema.Datetime( title =_(u'Deleted by'),required=False )
+    deleted_by = schema.TextLine( title=_(u'Locked by'), required=False )
     locked = schema.Bool( title=_(u'Locked'), required=False )
     locked_at = schema.Datetime( title =_(u'Locked at'),required=False )
     locked_by = schema.TextLine( title=_(u'Locked by'), required=False )
