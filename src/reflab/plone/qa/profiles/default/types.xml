@@ -5,5 +5,4 @@
   <object name="qa Folder" meta_type="Dexterity FTI"/>
   <object name="qa Question" meta_type="Dexterity FTI"/>
   <object name="qa Answer" meta_type="Dexterity FTI"/>
-  <object name="Comment" meta_type="Dexterity FTI"/>
 </object>

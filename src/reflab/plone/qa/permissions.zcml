@@ -7,12 +7,6 @@
   <!-- -*- extra stuff goes here -*- -->
 
     <permission
-        id="reflab.plone.qa.AddComment"
-        title="reflab.plone.qa: Add Comment"
-    />
-
-
-    <permission
         id="reflab.plone.qa.AddQaAnswer"
         title="reflab.plone.qa: Add QaAnswer"
     />

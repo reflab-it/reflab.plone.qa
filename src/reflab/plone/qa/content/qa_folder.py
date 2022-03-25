@@ -3,9 +3,11 @@ from plone.app.textfield import RichText
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
-from reflab.plone.qa import _
 from zope import schema
 from zope.interface import implementer
+
+
+from reflab.plone.qa import _
 
 
 class IQaFolder(model.Schema):
