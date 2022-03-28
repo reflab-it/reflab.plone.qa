@@ -1,0 +1,16 @@
+
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+  <adapter factory=".get.RelatedObjects" name="related-objects"/>
+
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".get.RelatedObjectsGet"
+    name="@related-objects"
+    permission="zope2.View"
+    />
+
+</configure>
