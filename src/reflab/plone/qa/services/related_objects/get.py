@@ -37,7 +37,12 @@ class RelatedObjects(object):
                 'closed': i.closed,
                 'text': i.text,
                 'approved': i.approved,
-                'deleted': i.deleted
+                'deleted': i.deleted,
+                '_meta':
+                {
+                    'type': i.Type(),
+                    'portal_type': i.portal_type
+                }
             })
         response = {
             'related-objects': tmp
