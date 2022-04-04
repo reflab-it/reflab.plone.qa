@@ -25,24 +25,27 @@ class RelatedObjects(object):
         }
         if not expand:
             return result
-        #import pdb; pdb.set_trace()
-        # xxx need filtering based on type?
         contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
         tmp = []
+        #import pdb; pdb.set_trace()
         for i in contents:
             tmp.append({
+                'id': i.id,
                 'title': i.title,
-                'desc': i.description,
+                'description': i.description,
                 'author': i.author,
                 'closed': i.closed,
                 'text': i.text,
                 'approved': i.approved,
                 'deleted': i.deleted,
+                'author': i.author,
                 '_meta':
                 {
                     'type': i.Type(),
                     'portal_type': i.portal_type
-                }
+                },
+                'link': i.absolute_url(),
+                'rel': i.absolute_url(1),
             })
         response = {
             'related-objects': tmp
