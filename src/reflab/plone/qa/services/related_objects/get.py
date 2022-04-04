@@ -34,6 +34,7 @@ class RelatedObjects(object):
                 },
                 'link': item.absolute_url(),
                 'rel': item.absolute_url(1),
+                'subs': len(item.items()),
             }
         result = {
             'related-objects': {
@@ -45,6 +46,7 @@ class RelatedObjects(object):
         if not expand:
             return result
         contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
+        #import pdb; pdb.set_trace()
         tmp = []
         parent = None
         if self.context.Type() == 'Question':
