@@ -4,12 +4,21 @@
     xmlns:plone="http://namespaces.plone.org/plone">
 
   <adapter factory=".get.RelatedObjects" name="related-objects"/>
+  <adapter factory=".get.RelatedObjects" name="get-questions"/>
 
   <plone:service
     method="GET"
     for="zope.interface.Interface"
     factory=".get.RelatedObjectsGet"
     name="@related-objects"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".get.RelatedObjectsGetQuestions"
+    name="@get-questions"
     permission="zope2.View"
     />
 

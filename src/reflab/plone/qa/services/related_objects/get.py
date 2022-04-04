@@ -55,3 +55,11 @@ class RelatedObjectsGet(Service):
     def reply(self):
         related_objects = RelatedObjects(self.context, self.request)
         return related_objects(expand=True)['related-objects']
+
+class RelatedObjectsGetQuestions(Service):
+
+    def reply(self):
+        related_objects = RelatedObjects(self.context, self.request)
+        tmp = related_objects(expand=True)['related-objects']
+        tmp = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
+        return tmp
