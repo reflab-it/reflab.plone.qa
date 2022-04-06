@@ -99,6 +99,7 @@ class RelatedObjectsGetQuestions(Service):
 
         return {
             'questions': _tmp,
-            'total_questions': len(tmp)
+            'total_questions': len(tmp),
+            'number_of_current_result': len(_tmp),
         }
         return tmp
