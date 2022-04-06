@@ -35,6 +35,8 @@ class RelatedObjects(object):
                 'link': item.absolute_url(),
                 'rel': item.absolute_url(1),
                 'subs': len(item.items()),
+                'last_activity_at': item.last_activity_at.isoformat(),
+                'added_at': item.added_at.isoformat(),
             }
         result = {
             'related-objects': {
@@ -46,7 +48,6 @@ class RelatedObjects(object):
         if not expand:
             return result
         contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
-        #import pdb; pdb.set_trace()
         tmp = []
         parent = None
         if self.context.Type() == 'Question':
@@ -73,5 +74,31 @@ class RelatedObjectsGetQuestions(Service):
     def reply(self):
         related_objects = RelatedObjects(self.context, self.request)
         tmp = related_objects(expand=True)['related-objects']['items']
-        tmp = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
+        # need to filter only questions
+        only_question_objects = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
+        only_question_objects = sorted( only_question_objects,
+            key = lambda d: d['added_at'],
+            reverse = True
+        )
+        _start = 0
+        _end = len(tmp)
+        try:
+            if self.request.has_key('start_at'):
+                _start = int(self.request.get('start_at'))
+            if self.request.has_key('end_at'):
+                _end = int(self.request.get('end_at'))
+        except:
+            pass
+        
+        # pagination ? or only let's user able to get item from x to y?
+        
+        if _end > _start:
+            _tmp = only_question_objects[_start:_end]
+        else:
+            _tmp = only_question_objects
+
+        return {
+            'questions': _tmp,
+            'total_questions': len(tmp)
+        }
         return tmp
