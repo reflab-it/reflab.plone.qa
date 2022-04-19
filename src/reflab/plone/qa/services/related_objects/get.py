@@ -50,10 +50,21 @@ class RelatedObjects(object):
         contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
         tmp = []
         parent = None
+        full_tree = False
         if self.context.Type() == 'Question':
             parent = get_field(self.context)
+            full_tree = True
         for i in contents:
-            tmp.append(get_field(i))
+            anws = get_field(i)
+            anws['comments'] = []
+            anws['hasComments'] = False
+            if full_tree:
+                comments = [x.getObject() for x in api.content.find(context=i, depth=1)]
+                if len(comments) > 0:
+                    anws['hasComments'] = True  
+                    for com in comments:
+                        anws['comments'].append(get_field(com))
+            tmp.append(anws)
         response = {
             'related-objects': {
                 'items': tmp,
