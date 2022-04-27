@@ -37,6 +37,7 @@ class RelatedObjects(object):
                 'subs': len(item.items()),
                 'last_activity_at': item.last_activity_at.isoformat(),
                 'added_at': item.added_at.isoformat(),
+                'tags': item.tags or None
             }
         result = {
             'related-objects': {
@@ -47,10 +48,14 @@ class RelatedObjects(object):
         }
         if not expand:
             return result
-        contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
+        if self.context.portal_type == 'qa Folder':
+            contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
+        else:
+            contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
         tmp = []
         parent = None
         full_tree = False
+
         if self.context.Type() == 'Question':
             parent = get_field(self.context)
             full_tree = True

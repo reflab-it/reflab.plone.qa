@@ -13,7 +13,7 @@ class IQaQuestion(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaQuestion
     """
 
-    fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at') )
+    fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at', 'tags') )
     fieldset( 'status', label=u'Status', fields=('closed', 'deleted', 'approved'))
     fieldset( 'points', label=u'Points', fields=('view_count', 'favourite_count',
         'answer_count', 'points'))
