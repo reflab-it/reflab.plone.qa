@@ -5,6 +5,8 @@
 
   <adapter factory=".get.RelatedObjects" name="related-objects"/>
   <adapter factory=".get.RelatedObjects" name="get-questions"/>
+  <adapter factory=".post.InsertPost" name="insert_post"/>
+
 
   <plone:service
     method="GET"
@@ -19,6 +21,14 @@
     for="zope.interface.Interface"
     factory=".get.RelatedObjectsGetQuestions"
     name="@get-questions"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="POST"
+    for="zope.interface.Interface"
+    factory=".post.InsertPostObj"
+    name="@insert_post"
     permission="zope2.View"
     />
 
