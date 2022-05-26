@@ -38,8 +38,8 @@ class RelatedObjects(object):
                 'link': item.absolute_url(),
                 'rel': item.absolute_url(1),
                 'subs': len(item.items()),
-                'last_activity_at': item.last_activity_at.isoformat(),
-                'added_at': item.added_at.isoformat(),
+                'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+                'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
                 'tags': item.tags or None
             }
         result = {
