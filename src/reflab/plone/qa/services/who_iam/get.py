@@ -28,18 +28,24 @@ class WhoIam(object):
             result = {
                 'who-iam': {
                     'status': 'anonymous',
-                    'userid': None
+                    'userid': None,
+                    'username': None
                 }
             }
         else:
             uid = None
+            username = None
             user_data = api.user.get_current()
-            if user_data is not None:
+            try:
                 uid = user_data.id
+                username = user_data.getUserName()
+            except:
+                pass
             result = {
                 'who-iam': {
                     'status': 'logged',
-                    'userid': uid
+                    'userid': uid,
+                    'username': username
                 }
             }
         return result
