@@ -24,30 +24,36 @@ class WhoIam(object):
         }
         if not expand:
             return result
+
+        # set default values:
+        uid = None
+        username = None
+        user_full_name = None
+        status = None
+        
+        # getting user data or none
         if api.user.is_anonymous():
-            result = {
-                'who-iam': {
-                    'status': 'anonymous',
-                    'userid': None,
-                    'username': None
-                }
-            }
+            status = 'anonymous'
         else:
-            uid = None
-            username = None
-            user_data = api.user.get_current()
+            status = 'logged'
             try:
+                user_data = api.user.get_current()
                 uid = user_data.id
                 username = user_data.getUserName()
+                user_full_name = user_data.getProperty('fullname')
             except:
-                pass
-            result = {
-                'who-iam': {
-                    'status': 'logged',
-                    'userid': uid,
-                    'username': username
-                }
+                status = 'error'
+
+        result = {
+            'who-iam': {
+                'status': status,
+                'userid': uid,
+                'username': username,
+                'fullname': user_full_name
             }
+        }
+
+        # return data
         return result
 
 
