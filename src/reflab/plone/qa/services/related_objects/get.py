@@ -12,10 +12,13 @@ from zope.interface import implementer
 class RelatedObjects(object):
 
     def __init__(self, context, request):
+        print('init ')
         self.context = context
         self.request = request
 
     def __call__(self, expand=False):
+        print('call ')
+        print("expand? " +str(expand))
         def get_field(item):
             return {
                 'id': item.id,
@@ -55,7 +58,7 @@ class RelatedObjects(object):
         tmp = []
         parent = None
         full_tree = False
-
+        print("full_tree?? " + str(full_tree))
         if self.context.Type() == 'Question':
             parent = get_field(self.context)
             full_tree = True
@@ -82,12 +85,14 @@ class RelatedObjects(object):
 class RelatedObjectsGet(Service):
 
     def reply(self):
+        print("reply A")
         related_objects = RelatedObjects(self.context, self.request)
         return related_objects(expand=True)['related-objects']
 
 class RelatedObjectsGetQuestions(Service):
 
     def reply(self):
+        print("reply B")
         related_objects = RelatedObjects(self.context, self.request)
         tmp = related_objects(expand=True)['related-objects']['items']
         # need to filter only questions
@@ -107,12 +112,15 @@ class RelatedObjectsGetQuestions(Service):
             pass
         
         # pagination ? or only let's user able to get item from x to y?
-        
+        print('start is => ' + str(_start))
+        print("end is => " + str(_end))
+
         if _end > _start:
             _tmp = only_question_objects[_start:_end]
         else:
             _tmp = only_question_objects
-
+        print('before return')
+        print('=========================')
         return {
             'questions': _tmp,
             'total_questions': len(tmp),
