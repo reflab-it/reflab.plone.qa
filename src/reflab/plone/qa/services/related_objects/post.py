@@ -70,7 +70,33 @@ class InsertPostObj(Service):
         if _type is None or _parent_type is None or _parent_id is None:
             return invalid_response
 
+        # check type
+        if _type not in ['question', 'comment', 'reply']:
+            return {
+                'status': 'error',
+                'message': 'invalid type'
+            }
+
         # create comment or response
+        if _type == 'question':
+            obj = api.content.find(context=self.context, id=_parent_id)
+            folder = obj[0].getObject()
+            try:
+                _title = data.get('title')
+                res = api.content.create(
+                    container=folder,
+                    type='qa Question',
+                    title=_title,
+                    author=user_name,
+                    added_at=datetime.now(),
+                    text=data.get('data') or ''
+                )
+                response['status'] = 'ok'
+                response['message'] = 'created'
+            except:
+                response['status'] = 'error'
+                response['message'] = 'unable to created'
+            #import pdb; pdb.set_trace()
 
         if _type == 'comment':
             pass
