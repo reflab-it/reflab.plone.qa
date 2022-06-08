@@ -2,5 +2,6 @@
 
   <include package=".related_objects" />
   <include package=".who_iam" />
+  <include package=".tags" />
 
 </configure>
