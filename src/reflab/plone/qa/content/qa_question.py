@@ -19,6 +19,8 @@ class IQaQuestion(model.Schema):
         'answer_count', 'points'))
     fieldset( 'activity', label=u'Activity', fields=('last_activity_at',
         'last_activity_by', 'followed_by', 'favorited_by', 'closed_by'))
+    fieldset('score', label=u'Scoring System', fields=('vote_up_list', 'vote_down_list',
+        'viewed_by'))
 
     text = schema.Text( title=_(u'Text'), required=False )
     author = schema.TextLine( title=_(u'Author'), required=False )
@@ -41,6 +43,30 @@ class IQaQuestion(model.Schema):
 
     tags = schema.List(
         title=u'Tags',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
+    vote_up_list = schema.List(
+        title=u'Vote Up List',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
+    vote_down_list = schema.List(
+        title=u'Vote Down List',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
+    viewed_by = schema.List(
+        title=u'Viewed By',
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],

@@ -31,7 +31,6 @@ class Tags(object):
         for question in contents:
             for tag in question.tags:
                 all_tags.append(tag)
-
         result = {
             'tag-list': all_tags
         }

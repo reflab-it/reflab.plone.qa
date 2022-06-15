@@ -16,6 +16,7 @@ class IQaAnswer(model.Schema):
     fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at') )
     fieldset( 'delete', label=u'Delete', fields=('deleted', 'deleted_at', 'deleted_by'))
     fieldset( 'lock', label=u'Lock', fields=('locked', 'locked_at', 'locked_by'))
+    fieldset('score', label=u'Scoring System', fields=('vote_up_list', 'vote_down_list'))
 
     text = schema.Text( title=_(u'Text'), required=True )
     author = schema.TextLine( title=_(u'Author'), required=False )
@@ -28,6 +29,21 @@ class IQaAnswer(model.Schema):
     locked_at = schema.Datetime( title =_(u'Locked at'),required=False )
     locked_by = schema.TextLine( title=_(u'Locked by'), required=False )
 
+    vote_up_list = schema.List(
+        title=u'Vote Up List',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
+    vote_down_list = schema.List(
+        title=u'Vote Down List',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
 
 
 @implementer(IQaAnswer)

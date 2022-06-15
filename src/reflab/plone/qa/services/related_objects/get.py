@@ -40,6 +40,9 @@ class RelatedObjects(object):
                 'subs': len(item.items()),
                 'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
                 'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
+                'view_count': int(len(item.viewed_by)),
+                'vote_up_count': int(len(item.vote_up_list)),
+                'vote_down_count': int(len(item.vote_down_list)),
                 'tags': item.tags or None
             }
         result = {
