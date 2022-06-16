@@ -1,0 +1,31 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+  <adapter factory=".crud.Vote" name="Vote"/>
+
+  <plone:service
+    method="POST"
+    for="...content.qa_question.IQaQuestion"
+    factory=".crud.VoteUp"
+    name="@vote-up"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="POST"
+    for="...content.qa_question.IQaQuestion"
+    factory=".crud.VoteDown"
+    name="@vote-down"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    for="...content.qa_question.IQaQuestion"
+    factory=".crud.VoteInfo"
+    name="@vote-info"
+    permission="zope2.View"
+    />
+
+</configure>
