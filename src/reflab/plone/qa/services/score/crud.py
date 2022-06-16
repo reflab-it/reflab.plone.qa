@@ -49,20 +49,27 @@ class Vote(object):
 
 def remove_and_add_if_need(item, first_data_set, second_data_set):
     action = ''
+    first_modifid = False
+    second_modifid = False
     if item in first_data_set:
-        tmp = first_data_set
-        tmp.remove(item)
-        first_data_set = tmp
+        first_data_set.remove(item)
         action = "updated"
+        first_modifid = True
     else:
         if item not in second_data_set:
-            tmp = second_data_set
-            tmp.append(item)
-            second_data_set = tmp
+            second_data_set.append(item)
             action = "added"
+            second_modifid = True
         else:
             action = 'already'
-    return action
+    resp = {
+        'action': action,
+        'first_data_set': None,
+        'second_data_set': None
+    }
+    if first_modifid: resp['first_data_set'] = first_data_set
+    if second_modifid: resp['second_data_set'] = second_data_set
+    return resp
 
 class VoteUp(Service):
 
@@ -75,12 +82,15 @@ class VoteUp(Service):
         userid = None
         if 'userid' in res:
             userid = res['userid']
-        message = ''
         if userid is not None:
-            message = remove_and_add_if_need(userid, self.context.vote_down_list, self.context.vote_up_list)
+            result = remove_and_add_if_need(userid, self.context.vote_down_list, self.context.vote_up_list)
+            if result['first_data_set'] is not None:
+                self.context.vote_down_list = result['first_data_set']
+            if result['second_data_set'] is not None:
+                self.context.vote_up_list = result['second_data_set']
             return {
                 'status': 'ok',
-                'message': message,
+                'message': result['action'],
                 'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
             }
         else:
@@ -100,12 +110,15 @@ class VoteDown(Service):
         userid = None
         if 'userid' in res:
             userid = res['userid']
-        message = ''
         if userid is not None:
-            message = remove_and_add_if_need(userid, self.context.vote_up_list, self.context.vote_down_list)
+            result = remove_and_add_if_need(userid, self.context.vote_up_list, self.context.vote_down_list)
+            if result['first_data_set'] is not None:
+                self.context.vote_up_list = result['first_data_set']
+            if result['second_data_set'] is not None:
+                self.context.vote_down_list = result['second_data_set']
             return {
                 'status': 'ok',
-                'message': message,
+                'message': result['action'],
                 'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
             }
         else:
