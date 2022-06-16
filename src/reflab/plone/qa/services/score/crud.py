@@ -5,6 +5,8 @@ from plone.restapi.services import Service
 from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
+from zope.interface import alsoProvides
+import plone.protect.interfaces
 
 @implementer(IExpandableElement)
 @adapter(Interface, Interface)
@@ -45,65 +47,72 @@ class Vote(object):
         # return data
         return result
 
+def remove_and_add_if_need(item, first_data_set, second_data_set):
+    action = ''
+    if item in first_data_set:
+        tmp = first_data_set
+        tmp.remove(item)
+        first_data_set = tmp
+        action = "updated"
+    else:
+        if item not in second_data_set:
+            tmp = second_data_set
+            tmp.append(item)
+            second_data_set = tmp
+            action = "added"
+        else:
+            action = 'already'
+    return action
 
 class VoteUp(Service):
 
     def reply(self):
+        # disable cors
+        if "IDisableCSRFProtection" in dir(plone.protect.interfaces):
+            alsoProvides(self.request, plone.protect.interfaces.IDisableCSRFProtection)
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
         if 'userid' in res:
             userid = res['userid']
+        message = ''
         if userid is not None:
-            # check if the user first voted against
-            if userid in self.context.vote_down_list:
-                self.context.vote_down_list.remove(userid)
-            # check if he has not already voted
-            message = ''
-            if userid not in self.context.vote_up_list:
-                self.context.vote_up_list.append(userid)
-                message = 'added'
-            else:
-                message = 'already'
+            message = remove_and_add_if_need(userid, self.context.vote_down_list, self.context.vote_up_list)
             return {
                 'status': 'ok',
-                'message': message
+                'message': message,
+                'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
             }
         else:
             return {
                 'status': 'error',
-                'message': 'invalid user'
+                'message': 'invalid suer'
             }
 
 class VoteDown(Service):
 
     def reply(self):
+        # disable cors
+        if "IDisableCSRFProtection" in dir(plone.protect.interfaces):
+            alsoProvides(self.request, plone.protect.interfaces.IDisableCSRFProtection)
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
         if 'userid' in res:
             userid = res['userid']
+        message = ''
         if userid is not None:
-            # check if the user voted in favor first
-            if userid in self.context.vote_up_list:
-                self.context.vote_up_list.remove(userid)
-            # check if he has not already voted
-            message = ''
-            if userid not in self.context.vote_down_list:
-                self.context.vote_down_list.append(userid)
-                message = 'added'
-            else:
-                message = 'already'
+            message = remove_and_add_if_need(userid, self.context.vote_up_list, self.context.vote_down_list)
             return {
                 'status': 'ok',
-                'message': message
+                'message': message,
+                'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
             }
         else:
             return {
                 'status': 'error',
-                'message': 'invalid user'
+                'message': 'invalid suer'
             }
-
 class VoteInfo(Service):
 
     def reply(self):
@@ -118,7 +127,8 @@ class VoteInfo(Service):
             return {
                 'status': 'ok',
                 'vote_up': vote_up,
-                'vote_down': vote_down
+                'vote_down': vote_down,
+                'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
             }
         else:
             return {

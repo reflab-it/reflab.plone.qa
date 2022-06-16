@@ -43,6 +43,7 @@ class RelatedObjects(object):
                 'view_count': int(len(item.viewed_by)),
                 'vote_up_count': int(len(item.vote_up_list)),
                 'vote_down_count': int(len(item.vote_down_list)),
+                'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
                 'tags': item.tags or None
             }
         result = {
