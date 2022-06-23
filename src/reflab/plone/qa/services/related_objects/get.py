@@ -89,14 +89,12 @@ class RelatedObjects(object):
 class RelatedObjectsGet(Service):
 
     def reply(self):
-        print("reply A")
         related_objects = RelatedObjects(self.context, self.request)
         return related_objects(expand=True)['related-objects']
 
 class RelatedObjectsGetQuestions(Service):
 
     def reply(self):
-        print("reply B")
         related_objects = RelatedObjects(self.context, self.request)
         tmp = related_objects(expand=True)['related-objects']['items']
         # need to filter only questions
@@ -114,10 +112,6 @@ class RelatedObjectsGetQuestions(Service):
                 _end = int(self.request.get('end_at'))
         except:
             pass
-        
-        # pagination ? or only let's user able to get item from x to y?
-        print('start is => ' + str(_start))
-        print("end is => " + str(_end))
 
         if _end > _start:
             _tmp = only_question_objects[_start:_end]
@@ -125,6 +119,22 @@ class RelatedObjectsGetQuestions(Service):
             _tmp = only_question_objects
         print('before return')
         print('=========================')
+        if self.request.has_key('order_by'):
+            custom_order = self.request.get('order_by')
+            if custom_order in ['#', 'ALL', 'UNANSWERED', 'FOLLOWED', 'CLOSED']:
+                # xxx ordering
+                if custom_order in ['#', 'ALL']:
+                    pass
+                else:
+                    if custom_order == 'UNANSWERED':
+                        print('order by => UNANSWERED')
+                        pass
+                    elif custom_order == 'FOLLOWED':
+                        print('order by => FOLLOWED')
+                        pass
+                    elif custom_order == 'CLOSED':
+                        print('order by => CLOSED')
+                        pass
         return {
             'questions': _tmp,
             'total_questions': len(tmp),
