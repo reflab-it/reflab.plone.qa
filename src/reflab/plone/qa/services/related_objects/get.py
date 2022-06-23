@@ -113,31 +113,38 @@ class RelatedObjectsGetQuestions(Service):
         except:
             pass
 
-        if _end > _start:
-            _tmp = only_question_objects[_start:_end]
-        else:
-            _tmp = only_question_objects
         print('before return')
         print('=========================')
         if self.request.has_key('order_by'):
             custom_order = self.request.get('order_by')
             if custom_order in ['#', 'ALL', 'UNANSWERED', 'FOLLOWED', 'CLOSED']:
                 # xxx ordering
+                print('ordering by: ' + custom_order)
                 if custom_order in ['#', 'ALL']:
                     pass
                 else:
                     if custom_order == 'UNANSWERED':
                         print('order by => UNANSWERED')
-                        pass
+                        _filtered = [q for q in only_question_objects if len(q['subs']) == 0]
+                        only_question_objects = _filtered
                     elif custom_order == 'FOLLOWED':
                         print('order by => FOLLOWED')
                         pass
                     elif custom_order == 'CLOSED':
-                        print('order by => CLOSED')
-                        pass
+                        _filtered = [q for q in only_question_objects if q['closed'] == True]
+                        only_question_objects = _filtered
+        else:
+            return {
+                'status': 'error',
+                'message': 'wrong ordering'
+            }
+        if _end > _start:
+            _tmp = only_question_objects[_start:_end]
+        else:
+            _tmp = only_question_objects
         return {
+            'status': 'ok',
             'questions': _tmp,
             'total_questions': len(tmp),
             'number_of_current_result': len(_tmp),
         }
-        return tmp
