@@ -103,6 +103,10 @@ class RelatedObjectsGetQuestions(Service):
             key = lambda d: d['added_at'],
             reverse = True
         )
+        # there is text?
+        if self.request.has_key('text'):
+            text = self.request.get('text')
+            only_question_objects = [ i for i in only_question_objects if text in i['title'] ]
         _start = 0
         _end = len(tmp)
         try:
@@ -133,13 +137,17 @@ class RelatedObjectsGetQuestions(Service):
                     elif custom_order == 'CLOSED':
                         _filtered = [q for q in only_question_objects if q['closed'] == True]
                         only_question_objects = _filtered
-        else:
-            return {
-                'status': 'error',
-                'message': 'wrong ordering'
-            }
+            else:
+                return {
+                    'status': 'error',
+                    'message': 'wrong ordering'
+                }
         if _end > _start:
-            _tmp = only_question_objects[_start:_end]
+            try:
+                _tmp = only_question_objects[_start:_end]
+            except:
+                print('however, something went quite wrong')
+                _tmp = only_question_objects    
         else:
             _tmp = only_question_objects
         return {
