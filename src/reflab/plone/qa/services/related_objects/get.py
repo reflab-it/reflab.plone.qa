@@ -130,6 +130,7 @@ class RelatedObjectsGetQuestions(Service):
                     if custom_order == 'UNANSWERED':
                         print('order by => UNANSWERED')
                         _filtered = [q for q in only_question_objects if q['subs'] == 0]
+                        #import pdb; pdb.set_trace()
                         only_question_objects = _filtered
                     elif custom_order == 'FOLLOWED':
                         print('order by => FOLLOWED')
@@ -144,7 +145,7 @@ class RelatedObjectsGetQuestions(Service):
                 }
         if _end > _start:
             try:
-                _tmp = only_question_objects[_start:_end]
+                _tmp = only_question_objects[_start:_end+1]
             except:
                 print('however, something went quite wrong')
                 _tmp = only_question_objects    
@@ -153,6 +154,6 @@ class RelatedObjectsGetQuestions(Service):
         return {
             'status': 'ok',
             'questions': _tmp,
-            'total_questions': len(tmp),
+            'total_questions': len(only_question_objects),
             'number_of_current_result': len(_tmp),
         }
