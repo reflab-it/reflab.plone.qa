@@ -129,7 +129,7 @@ class RelatedObjectsGetQuestions(Service):
                 else:
                     if custom_order == 'UNANSWERED':
                         print('order by => UNANSWERED')
-                        _filtered = [q for q in only_question_objects if len(q['subs']) == 0]
+                        _filtered = [q for q in only_question_objects if q['subs'] == 0]
                         only_question_objects = _filtered
                     elif custom_order == 'FOLLOWED':
                         print('order by => FOLLOWED')
