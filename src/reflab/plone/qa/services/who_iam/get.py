@@ -62,3 +62,59 @@ class WhoIamGet(Service):
     def reply(self):
         tmp = WhoIam(self.context, self.request)
         return tmp(expand=True)['who-iam']
+
+class WhoIsGet(Service):
+
+    def get_field(self, item):
+        return {
+            'id': item.id,
+            'title': item.title,
+            'description': item.description,
+            'author': item.author,
+            'closed': item.closed,
+            'text': item.text,
+            'approved': item.approved,
+            'deleted': item.deleted,
+            '_meta':
+            {
+                'type': item.Type(),
+                'portal_type': item.portal_type
+            },
+            'link': item.absolute_url(),
+            'rel': item.absolute_url(1),
+            'subs': len(item.items()),
+            'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+            'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
+            'view_count': int(len(item.viewed_by)),
+            'vote_up_count': int(len(item.vote_up_list)),
+            'vote_down_count': int(len(item.vote_down_list)),
+            'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
+            'tags': item.tags or None
+        }
+
+    def reply(self):
+        user = None
+        answ_list = []
+        if self.request.has_key('user') and self.request.has_key('folder'):
+            # xxx chiamata ad accounts?
+            user = self.request.get('user')
+            folder_mame = self.request.get('folder').replace('/', '')
+            curfolder = [f for f in self.context.contentItems() if f[0] == folder_mame]
+            try:
+                _cur = curfolder[0][1]
+                contents = [x.getObject() for x in api.content.find(context=_cur, depth=1, portal_type='qa Question', author=user)]
+                answ_list = [x for x in contents if x.author == user]
+            except:
+                answ_list = []
+        else:
+            return {
+                'status': 'error',
+                'message': 'missing user'
+            }
+        return {
+            'status': 'ok',
+            'message': 'draft',
+            'username': user,
+            'fullname': user,
+            'answers': [self.get_field(a) for a in answ_list]
+        }

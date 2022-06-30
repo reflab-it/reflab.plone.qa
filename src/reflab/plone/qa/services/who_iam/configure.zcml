@@ -12,4 +12,12 @@
     permission="zope2.View"
     />
 
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".get.WhoIsGet"
+    name="@who-is"
+    permission="zope2.View"
+    />
+
 </configure>

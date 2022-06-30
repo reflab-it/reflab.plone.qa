@@ -29,7 +29,6 @@ class RelatedObjects(object):
                 'text': item.text,
                 'approved': item.approved,
                 'deleted': item.deleted,
-                'author': item.author,
                 '_meta':
                 {
                     'type': item.Type(),
