@@ -6,6 +6,33 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 
+# utility method
+def get_field(item):
+    return {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'author': item.author,
+        'closed': item.closed,
+        'text': item.text,
+        'approved': item.approved,
+        'deleted': item.deleted,
+        '_meta':
+        {
+            'type': item.Type(),
+            'portal_type': item.portal_type
+        },
+        'link': item.absolute_url(),
+        'rel': item.absolute_url(1),
+        'subs': len(item.items()),
+        'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+        'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
+        'view_count': int(len(item.viewed_by)),
+        'vote_up_count': int(len(item.vote_up_list)),
+        'vote_down_count': int(len(item.vote_down_list)),
+        'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
+        'tags': item.tags or None
+    }
 
 @implementer(IExpandableElement)
 @adapter(Interface, Interface)
@@ -17,34 +44,6 @@ class RelatedObjects(object):
         self.request = request
 
     def __call__(self, expand=False):
-        print('call ')
-        print("expand? " +str(expand))
-        def get_field(item):
-            return {
-                'id': item.id,
-                'title': item.title,
-                'description': item.description,
-                'author': item.author,
-                'closed': item.closed,
-                'text': item.text,
-                'approved': item.approved,
-                'deleted': item.deleted,
-                '_meta':
-                {
-                    'type': item.Type(),
-                    'portal_type': item.portal_type
-                },
-                'link': item.absolute_url(),
-                'rel': item.absolute_url(1),
-                'subs': len(item.items()),
-                'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
-                'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
-                'view_count': int(len(item.viewed_by)),
-                'vote_up_count': int(len(item.vote_up_list)),
-                'vote_down_count': int(len(item.vote_down_list)),
-                'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
-                'tags': item.tags or None
-            }
         result = {
             'related-objects': {
                 '@id': '{}/@related-objects'.format(
@@ -61,10 +60,14 @@ class RelatedObjects(object):
         tmp = []
         parent = None
         full_tree = False
+#        similar = []
         print("full_tree?? " + str(full_tree))
         if self.context.Type() == 'Question':
             parent = get_field(self.context)
             full_tree = True
+            #all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1)]
+            #all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q]
+            #similar = [get_field(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
         for i in contents:
             anws = get_field(i)
             anws['comments'] = []
@@ -79,7 +82,7 @@ class RelatedObjects(object):
         response = {
             'related-objects': {
                 'items': tmp,
-                'parent': parent,
+                'parent': parent
             }
         }
         return response
@@ -90,6 +93,22 @@ class RelatedObjectsGet(Service):
     def reply(self):
         related_objects = RelatedObjects(self.context, self.request)
         return related_objects(expand=True)['related-objects']
+
+class RelatedObjectsGetSimilars(Service):
+    def reply(self):
+        try:
+            all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1)]
+            all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q]
+            similar = [get_field(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
+            return {
+                'status': 'ok',
+                'similar': similar
+            }
+        except:
+            return {
+                'status': 'error',
+                'similar': []
+            }
 
 class RelatedObjectsGetQuestions(Service):
 
