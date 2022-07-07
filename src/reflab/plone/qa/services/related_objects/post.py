@@ -127,7 +127,23 @@ class InsertPostObj(Service):
 class QuestionFollow(Service):
 
     def reply(self):
-        pass
-        return {
-            'status': 'ok'
-        }
+        # disable cors
+        if "IDisableCSRFProtection" in dir(plone.protect.interfaces):
+            alsoProvides(self.request, plone.protect.interfaces.IDisableCSRFProtection)
+        try:
+            username = api.user.get_current().getUserName()
+            if username not in self.context.followed_by:
+                tmp = self.context.followed_by.copy()
+                tmp.append(username)
+                self.context.followed_by = tmp
+                return {
+                    'status': 'ok'
+                }
+            else:
+                return {
+                    'status': 'already'
+                }
+        except:
+            return {
+                'status': 'error'
+            }
