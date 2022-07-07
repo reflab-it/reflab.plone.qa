@@ -123,3 +123,11 @@ class InsertPostObj(Service):
         # import pdb; pdb.set_trace()
 
         return response
+
+class QuestionFollow(Service):
+
+    def reply(self):
+        pass
+        return {
+            'status': 'ok'
+        }

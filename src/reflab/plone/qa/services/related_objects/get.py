@@ -31,7 +31,11 @@ def get_field(item):
         'vote_up_count': int(len(item.vote_up_list)),
         'vote_down_count': int(len(item.vote_down_list)),
         'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
-        'tags': item.tags or None
+        'tags': item.tags or None,
+        'followed': {
+            'count': len(item.followed_by),
+            'by': item.followed_by
+        }
     }
 
 @implementer(IExpandableElement)
@@ -93,6 +97,31 @@ class RelatedObjectsGet(Service):
     def reply(self):
         related_objects = RelatedObjects(self.context, self.request)
         return related_objects(expand=True)['related-objects']
+
+class RelatedObjectsGetFollowers(Service):
+    def reply(self):
+        obj = self.context
+        if self.context.portal_type != 'qa Question':
+            return {
+                'status': 'error',
+                'message': 'wrong call',
+                'data': {}
+            }
+        try:
+            return {
+                'status': 'ok',
+                'message': 'all ok',
+                'data': {
+                    'count': len(obj.followed_by),
+                    'followers': obj.followed_by
+                }
+            }
+        except Exception as e:
+            return {
+                'status': 'error',
+                'message': str(e),
+                'data': {}
+            }
 
 class RelatedObjectsGetSimilars(Service):
     def reply(self):
