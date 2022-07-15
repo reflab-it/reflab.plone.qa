@@ -146,10 +146,42 @@ class RelatedObjectsGetQuestions(Service):
         tmp = related_objects(expand=True)['related-objects']['items']
         # need to filter only questions
         only_question_objects = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
-        only_question_objects = sorted( only_question_objects,
-            key = lambda d: d['added_at'],
-            reverse = True
-        )
+
+        # before all need to sort
+        print('before all')
+        print('=========================')
+        if self.request.has_key('sort_order') and self.request.has_key('sort_by'):
+            sort_by = self.request.get('sort_by')
+            sort_order = self.request.get('sort_order')
+            print('sort by ' + sort_by)
+            print('order ' + sort_order)
+            #import pdb; pdb.set_trace()
+            if sort_by == 'by_date':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['added_at'],
+                    reverse = bool(sort_order == 'desc')
+                )
+            elif sort_by == 'by_activity':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['last_activity_at'],
+                    reverse = bool(sort_order == 'desc')
+                )
+            elif sort_by == 'by_answers':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['subs'],
+                    reverse = bool(sort_order == 'desc')
+                )
+            elif sort_by == 'by_votes':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['vote_count'],
+                    reverse = bool(sort_order == 'desc')
+                )
+        else:
+            # default sort 
+            only_question_objects = sorted( only_question_objects,
+                key = lambda d: d['added_at'],
+                reverse = True
+            )
         # there is text?
         if self.request.has_key('text'):
             text = self.request.get('text')
@@ -174,8 +206,6 @@ class RelatedObjectsGetQuestions(Service):
         except:
             pass
 
-        print('before return')
-        print('=========================')
         if self.request.has_key('order_by'):
             custom_order = self.request.get('order_by')
             if custom_order in ['#', 'ALL', 'UNANSWERED', 'FOLLOWED', 'CLOSED']:
@@ -208,6 +238,7 @@ class RelatedObjectsGetQuestions(Service):
                 _tmp = only_question_objects    
         else:
             _tmp = only_question_objects
+        
         return {
             'status': 'ok',
             'questions': _tmp,
