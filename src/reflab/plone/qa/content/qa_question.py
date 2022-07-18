@@ -24,6 +24,7 @@ class IQaQuestion(model.Schema):
 
     text = schema.Text( title=_(u'Text'), required=False )
     author = schema.TextLine( title=_(u'Author'), required=False )
+    author_full_name = schema.TextLine( title=_(u'Author Full Name'), required=False )
     added_at = schema.Datetime( title =_(u'Added At'),required=False )
 
     closed = schema.Bool( title=_(u'Closed'), required=False )
