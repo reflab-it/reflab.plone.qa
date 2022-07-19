@@ -8,3 +8,7 @@ class QAFolderView(DefaultView):
 
     def __call__(self):
         return super(QAFolderView, self).__call__()
+
+    @property
+    def title(self):
+        return f'QA Folder: {self.context.Title()}'

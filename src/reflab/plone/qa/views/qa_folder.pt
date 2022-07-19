@@ -5,8 +5,48 @@
       i18n:domain="reflab.plone.qa"
       metal:use-macro="context/main_template/macros/master">
 <body>
-  <metal:block fill-slot="content-core">
-      QA FOLDER VIEW
+  <metal:block fill-slot="main">
+
+    <h1 class="documentFirstHeading">${view/title}</h1>
+
+
+
+
+   <div class="pat-autotoc autotabs"
+         data-pat-autotoc="section:fieldset;levels:legend;">
+       <fieldset>
+         <legend>Questions</legend>
+         <div>
+           Lorem ipsum dolor sit amet, ex nam odio ceteros fastidii,
+           id porro lorem pro, homero facilisis in cum.
+           At doming voluptua indoctum mel, natum noster similique ne mel.
+         </div>
+       </fieldset>
+       <fieldset>
+         <legend>Settings</legend>
+         <div>
+          <tal:block repeat="widget view/widgets/values">
+              <div class="field">
+                  <label tal:content="widget/label" />
+                  <br />
+                  <div tal:content="structure widget/render" />
+              </div>
+          </tal:block>
+
+          <div tal:repeat="group view/groups"
+                    tal:attributes="id python:''.join((group.prefix, 'groups.', group.__name__)).replace('.', '-')">
+              <h3 tal:content="group/label" />
+              <div class="field" tal:repeat="widget group/widgets/values">
+                  <label tal:content="widget/label" />
+                  <br />
+                  <div tal:content="structure widget/render" />
+              </div>
+          </div>
+
+         </div>
+       </fieldset>
+   </div>    
+
   </metal:block>
 </body>
 </html>

@@ -32,10 +32,10 @@
   <property name="behaviors" purge="false">
     <element value="plone.namefromtitle"/>
     <element value="plone.shortname"/>
-    <element value="plone.ownership"/>
+    <!-- <element value="plone.ownership"/> -->
     <element value="plone.publication"/>
     <element value="plone.categorization"/>
-    <element value="plone.basic"/>
+    <!-- <element value="plone.basic"/> -->
     <element value="plone.locking" />
     <element value="plone.versioning" />
   </property>

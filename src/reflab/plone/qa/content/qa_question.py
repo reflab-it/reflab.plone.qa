@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.textfield import RichText
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
@@ -13,22 +15,49 @@ class IQaQuestion(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaQuestion
     """
 
-    fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at', 'tags') )
-    fieldset( 'status', label=u'Status', fields=('closed', 'deleted', 'approved'))
-    fieldset( 'points', label=u'Points', fields=('view_count', 'favourite_count',
-        'answer_count', 'points'))
-    fieldset( 'activity', label=u'Activity', fields=('last_activity_at',
+    fieldset(
+        'metadata',
+        label=u'Metadata',
+        fields=('creators', 'tags')
+    
+    )
+    fieldset(
+        'points',
+        label=u'Points',
+        fields=('view_count', 'favourite_count', 'answer_count', 'points')
+    )
+
+    fieldset('activity', label=u'Activity', fields=('last_activity_at',
         'last_activity_by', 'followed_by', 'favorited_by', 'closed_by'))
     fieldset('score', label=u'Scoring System', fields=('vote_up_list', 'vote_down_list',
         'viewed_by'))
 
-    text = schema.Text( title=_(u'Text'), required=False )
-    author = schema.TextLine( title=_(u'Author'), required=False )
-    added_at = schema.Datetime( title =_(u'Added At'),required=False )
 
-    closed = schema.Bool( title=_(u'Closed'), required=False )
-    deleted = schema.Bool( title=_(u'Deleted'), required=False )
-    approved = schema.Bool( title=_(u'Approved'), required=False )
+    # User fields
+    title = schema.TextLine(
+        title=_('label_qa_question_title', default='Question'),
+        required=True
+    )
+
+    text = schema.Text(
+        title=_('label_qa_question_text', default='Question details'), 
+        required=False 
+    )
+
+    # Metadata: hidden for user editable by reviewers
+    directives.read_permission(creators='cmf.ReviewPortalContent')
+    directives.write_permission(creators='cmf.ReviewPortalContent')
+    directives.widget(
+        'creators',
+        AjaxSelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Users'
+    )    
+    creators = schema.Tuple(
+        title=_('label_qa_question_creators', 'Authors'),
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=(),
+    )    
 
     view_count = schema.Int( title=_(u'view_count'), required=False )
     favourite_count = schema.Int( title=_(u'favourite_count'), required=False )
