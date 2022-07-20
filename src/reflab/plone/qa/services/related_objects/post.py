@@ -99,7 +99,22 @@ class InsertPostObj(Service):
             #import pdb; pdb.set_trace()
 
         if _type == 'comment':
-            pass
+            try:
+                obj = api.content.find(context=self.context, id=_parent_id)
+                answer = obj[0].getObject()
+                res = api.content.create(
+                    container=answer,
+                    type='qa Comment',
+                    id=str(uuid.uuid4()),
+                    author=user_name,
+                    added_at=datetime.now(),
+                    text=data.get('data') or ''
+                )
+                response['status'] = 'ok'
+                response['message'] = 'created'
+            except:
+                response['status'] = 'error'
+                response['message'] = 'unable to created'
 
         if _type == 'reply':
             # getting base object
