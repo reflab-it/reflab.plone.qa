@@ -95,9 +95,10 @@ class WhoIsGet(Service):
     def reply(self):
         user = None
         answ_list = []
-        if self.request.has_key('user') and self.request.has_key('folder'):
-            # xxx chiamata ad accounts?
+        if self.request.has_key('user') and self.request.has_key('folder'):            
             user = self.request.get('user')
+            plone_user_data = api.user.get(user)
+            full_name = plone_user_data.getProperty('fullname')
             folder_mame = self.request.get('folder').replace('/', '')
             curfolder = [f for f in self.context.contentItems() if f[0] == folder_mame]
             try:
@@ -115,6 +116,6 @@ class WhoIsGet(Service):
             'status': 'ok',
             'message': 'draft',
             'username': user,
-            'fullname': user,
+            'fullname': full_name,
             'answers': [self.get_field(a) for a in answ_list]
         }

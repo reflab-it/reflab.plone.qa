@@ -99,7 +99,22 @@ class InsertPostObj(Service):
             #import pdb; pdb.set_trace()
 
         if _type == 'comment':
-            pass
+            try:
+                obj = api.content.find(context=self.context, id=_parent_id)
+                answer = obj[0].getObject()
+                res = api.content.create(
+                    container=answer,
+                    type='qa Comment',
+                    id=str(uuid.uuid4()),
+                    author=user_name,
+                    added_at=datetime.now(),
+                    text=data.get('data') or ''
+                )
+                response['status'] = 'ok'
+                response['message'] = 'created'
+            except:
+                response['status'] = 'error'
+                response['message'] = 'unable to created'
 
         if _type == 'reply':
             # getting base object
@@ -123,3 +138,27 @@ class InsertPostObj(Service):
         # import pdb; pdb.set_trace()
 
         return response
+
+class QuestionFollow(Service):
+
+    def reply(self):
+        # disable cors
+        if "IDisableCSRFProtection" in dir(plone.protect.interfaces):
+            alsoProvides(self.request, plone.protect.interfaces.IDisableCSRFProtection)
+        try:
+            username = api.user.get_current().getUserName()
+            if username not in self.context.followed_by:
+                tmp = self.context.followed_by.copy()
+                tmp.append(username)
+                self.context.followed_by = tmp
+                return {
+                    'status': 'ok'
+                }
+            else:
+                return {
+                    'status': 'already'
+                }
+        except:
+            return {
+                'status': 'error'
+            }

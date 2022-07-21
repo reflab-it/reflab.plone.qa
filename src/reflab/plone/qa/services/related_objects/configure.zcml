@@ -5,6 +5,9 @@
 
   <adapter factory=".get.RelatedObjects" name="related-objects"/>
   <adapter factory=".get.RelatedObjects" name="get-questions"/>
+  <adapter factory=".get.RelatedObjects" name="get-similars"/>
+  <adapter factory=".get.RelatedObjects" name="get-followers"/>
+  <adapter factory=".post.InsertPost" name="follow"/>
   <adapter factory=".post.InsertPost" name="insert_post"/>
 
 
@@ -21,6 +24,30 @@
     for="zope.interface.Interface"
     factory=".get.RelatedObjectsGetQuestions"
     name="@get-questions"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".get.RelatedObjectsGetSimilars"
+    name="@get-similars"
+    permission="zope2.View"
+    />
+  
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".get.RelatedObjectsGetFollowers"
+    name="@get-followers"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="POST"
+    for="zope.interface.Interface"
+    factory=".post.QuestionFollow"
+    name="@follow"
     permission="zope2.View"
     />
 

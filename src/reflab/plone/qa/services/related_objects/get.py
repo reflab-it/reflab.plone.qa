@@ -6,6 +6,37 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 
+# utility method
+def get_field(item):
+    return {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'author': item.author,
+        'closed': item.closed,
+        'text': item.text,
+        'approved': item.approved,
+        'deleted': item.deleted,
+        '_meta':
+        {
+            'type': item.Type(),
+            'portal_type': item.portal_type
+        },
+        'link': item.absolute_url(),
+        'rel': item.absolute_url(1),
+        'subs': len(item.items()),
+        'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+        'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
+        'view_count': int(len(item.viewed_by)),
+        'vote_up_count': int(len(item.vote_up_list)),
+        'vote_down_count': int(len(item.vote_down_list)),
+        'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
+        'tags': item.tags or None,
+        'followed': {
+            'count': len(item.followed_by),
+            'by': item.followed_by
+        }
+    }
 
 @implementer(IExpandableElement)
 @adapter(Interface, Interface)
@@ -17,34 +48,6 @@ class RelatedObjects(object):
         self.request = request
 
     def __call__(self, expand=False):
-        print('call ')
-        print("expand? " +str(expand))
-        def get_field(item):
-            return {
-                'id': item.id,
-                'title': item.title,
-                'description': item.description,
-                'author': item.author,
-                'closed': item.closed,
-                'text': item.text,
-                'approved': item.approved,
-                'deleted': item.deleted,
-                '_meta':
-                {
-                    'type': item.Type(),
-                    'portal_type': item.portal_type
-                },
-                'link': item.absolute_url(),
-                'rel': item.absolute_url(1),
-                'subs': len(item.items()),
-                'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
-                'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
-                'view_count': int(len(item.viewed_by)),
-                'vote_up_count': int(len(item.vote_up_list)),
-                'vote_down_count': int(len(item.vote_down_list)),
-                'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
-                'tags': item.tags or None
-            }
         result = {
             'related-objects': {
                 '@id': '{}/@related-objects'.format(
@@ -61,10 +64,14 @@ class RelatedObjects(object):
         tmp = []
         parent = None
         full_tree = False
+#        similar = []
         print("full_tree?? " + str(full_tree))
         if self.context.Type() == 'Question':
             parent = get_field(self.context)
             full_tree = True
+            #all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1)]
+            #all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q]
+            #similar = [get_field(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
         for i in contents:
             anws = get_field(i)
             anws['comments'] = []
@@ -79,7 +86,7 @@ class RelatedObjects(object):
         response = {
             'related-objects': {
                 'items': tmp,
-                'parent': parent,
+                'parent': parent
             }
         }
         return response
@@ -91,6 +98,47 @@ class RelatedObjectsGet(Service):
         related_objects = RelatedObjects(self.context, self.request)
         return related_objects(expand=True)['related-objects']
 
+class RelatedObjectsGetFollowers(Service):
+    def reply(self):
+        obj = self.context
+        if self.context.portal_type != 'qa Question':
+            return {
+                'status': 'error',
+                'message': 'wrong call',
+                'data': {}
+            }
+        try:
+            return {
+                'status': 'ok',
+                'message': 'all ok',
+                'data': {
+                    'count': len(obj.followed_by),
+                    'followers': obj.followed_by
+                }
+            }
+        except Exception as e:
+            return {
+                'status': 'error',
+                'message': str(e),
+                'data': {}
+            }
+
+class RelatedObjectsGetSimilars(Service):
+    def reply(self):
+        try:
+            all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1, portal_type='qa Question')]
+            all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q if x.id != self.context.id]
+            similar = [get_field(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
+            return {
+                'status': 'ok',
+                'similar': similar
+            }
+        except:
+            return {
+                'status': 'error',
+                'similar': []
+            }
+
 class RelatedObjectsGetQuestions(Service):
 
     def reply(self):
@@ -98,10 +146,42 @@ class RelatedObjectsGetQuestions(Service):
         tmp = related_objects(expand=True)['related-objects']['items']
         # need to filter only questions
         only_question_objects = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
-        only_question_objects = sorted( only_question_objects,
-            key = lambda d: d['added_at'],
-            reverse = True
-        )
+
+        # before all need to sort
+        print('before all')
+        print('=========================')
+        if self.request.has_key('sort_order') and self.request.has_key('sort_by'):
+            sort_by = self.request.get('sort_by')
+            sort_order = self.request.get('sort_order')
+            print('sort by ' + sort_by)
+            print('order ' + sort_order)
+            #import pdb; pdb.set_trace()
+            if sort_by == 'by_date':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['added_at'],
+                    reverse = bool(sort_order == 'desc')
+                )
+            elif sort_by == 'by_activity':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['last_activity_at'],
+                    reverse = bool(sort_order == 'desc')
+                )
+            elif sort_by == 'by_answers':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['subs'],
+                    reverse = bool(sort_order == 'desc')
+                )
+            elif sort_by == 'by_votes':
+                only_question_objects = sorted( only_question_objects,
+                    key = lambda d: d['vote_count'],
+                    reverse = bool(sort_order == 'desc')
+                )
+        else:
+            # default sort 
+            only_question_objects = sorted( only_question_objects,
+                key = lambda d: d['added_at'],
+                reverse = True
+            )
         # there is text?
         if self.request.has_key('text'):
             text = self.request.get('text')
@@ -126,8 +206,6 @@ class RelatedObjectsGetQuestions(Service):
         except:
             pass
 
-        print('before return')
-        print('=========================')
         if self.request.has_key('order_by'):
             custom_order = self.request.get('order_by')
             if custom_order in ['#', 'ALL', 'UNANSWERED', 'FOLLOWED', 'CLOSED']:
@@ -160,6 +238,7 @@ class RelatedObjectsGetQuestions(Service):
                 _tmp = only_question_objects    
         else:
             _tmp = only_question_objects
+        
         return {
             'status': 'ok',
             'questions': _tmp,
