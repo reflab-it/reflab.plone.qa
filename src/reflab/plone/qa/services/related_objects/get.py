@@ -7,7 +7,64 @@ from zope.interface import Interface
 from zope.interface import implementer
 
 # utility method
-def get_field(item):
+def get_question_fields(item):
+    return {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'author': item.creators and item.creators[0] or None,
+        'closed': api.content.get_state(item) == 'closed',
+        'text': item.text,
+        'approved': item.approved,
+        'deleted': api.content.get_state(item) == 'deleted',
+        '_meta':
+        {
+            'type': item.Type(),
+            'portal_type': item.portal_type
+        },
+        'link': item.absolute_url(),
+        'rel': item.absolute_url(1),
+        'subs': item.answer_count(),
+        'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+        'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
+        'view_count': item.view_count(),
+        'vote_up_count': item.voted_up_count(),
+        'vote_down_count': item.voted_down_count(),
+        'vote_count': item.points(),
+        'tags': item.subjects or None,
+    }
+
+def get_answer_fields(item):
+    comments = [get_comment_fields(c) for c in item.listFolderContents(contentFilter={"portal_type" : "qa Comment"})]
+    return {
+        'id': item.id,
+        'title': item.title,
+        'description': item.description,
+        'author': item.author,
+        # 'closed': item.closed,
+        'text': item.text,
+        'approved': item.approved,
+        'deleted': item.deleted,
+        '_meta':
+        {
+            'type': item.Type(),
+            'portal_type': item.portal_type
+        },
+        'link': item.absolute_url(),
+        'rel': item.absolute_url(1),
+        'subs': len(item.items()),
+        'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+        'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
+        'view_count': int(len(item.viewed_by)),
+        'vote_up_count': int(len(item.vote_up_list)),
+        'vote_down_count': int(len(item.vote_down_list)),
+        'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
+        'tags': item.tags or None,
+        'comments': comments,
+        'hasComments': len(comments) > 0,
+    }
+
+def get_comment_fields(item):
     return {
         'id': item.id,
         'title': item.title,
@@ -32,71 +89,26 @@ def get_field(item):
         'vote_down_count': int(len(item.vote_down_list)),
         'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
         'tags': item.tags or None,
-        'followed': {
-            'count': len(item.followed_by),
-            'by': item.followed_by
-        }
     }
-
-@implementer(IExpandableElement)
-@adapter(Interface, Interface)
-class RelatedObjects(object):
-
-    def __init__(self, context, request):
-        print('init ')
-        self.context = context
-        self.request = request
-
-    def __call__(self, expand=False):
-        result = {
-            'related-objects': {
-                '@id': '{}/@related-objects'.format(
-                    self.context.absolute_url(),
-                ),
-            },
-        }
-        if not expand:
-            return result
-        if self.context.portal_type == 'qa Folder':
-            contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
-        else:
-            contents = [x.getObject() for x in api.content.find(context=self.context, depth=1)]
-        tmp = []
-        parent = None
-        full_tree = False
-#        similar = []
-        print("full_tree?? " + str(full_tree))
-        if self.context.Type() == 'Question':
-            parent = get_field(self.context)
-            full_tree = True
-            #all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1)]
-            #all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q]
-            #similar = [get_field(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
-        for i in contents:
-            anws = get_field(i)
-            anws['comments'] = []
-            anws['hasComments'] = False
-            if full_tree:
-                comments = [x.getObject() for x in api.content.find(context=i, depth=1)]
-                if len(comments) > 0:
-                    anws['hasComments'] = True  
-                    for com in comments:
-                        anws['comments'].append(get_field(com))
-            tmp.append(anws)
-        response = {
-            'related-objects': {
-                'items': tmp,
-                'parent': parent
-            }
-        }
-        return response
 
 
 class RelatedObjectsGet(Service):
 
+    @property
+    def _related_objects(self):
+        result = {
+            'related-objects': {
+                'items': [],
+                'parent': get_question_fields(self.context),
+            }
+        }
+        for item in self.context.listFolderContents(contentFilter={"portal_type" : "qa Answer"}):
+            result['related-objects']['items'].append(get_answer_fields(item))
+        return result 
+
     def reply(self):
-        related_objects = RelatedObjects(self.context, self.request)
-        return related_objects(expand=True)['related-objects']
+        related_objects = self._related_objects
+        return related_objects['related-objects']
 
 class RelatedObjectsGetFollowers(Service):
     def reply(self):
@@ -128,7 +140,7 @@ class RelatedObjectsGetSimilars(Service):
         try:
             all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1, portal_type='qa Question')]
             all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q if x.id != self.context.id]
-            similar = [get_field(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
+            similar = [get_question_fields(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
             return {
                 'status': 'ok',
                 'similar': similar
@@ -141,9 +153,21 @@ class RelatedObjectsGetSimilars(Service):
 
 class RelatedObjectsGetQuestions(Service):
 
+    @property
+    def _related_objects(self):
+        result = {
+            'related-objects': {
+                'items': [],
+                'parent': None,
+            }
+        }
+        for item in self.context.listFolderContents(contentFilter={"portal_type" : "qa Question"}):
+            result['related-objects']['items'].append(get_question_fields(item))
+        return result    
+
     def reply(self):
-        related_objects = RelatedObjects(self.context, self.request)
-        tmp = related_objects(expand=True)['related-objects']['items']
+        related_objects = self._related_objects
+        tmp = related_objects['related-objects']['items']
         # need to filter only questions
         only_question_objects = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
 

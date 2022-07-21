@@ -12,3 +12,9 @@ class QAFolderView(DefaultView):
     @property
     def title(self):
         return f'QA Folder: {self.context.Title()}'
+
+    def questions(self):
+        _questions = self.context.listFolderContents(
+            contentFilter={"portal_type" : "qa Question"}
+        )
+        return _questions

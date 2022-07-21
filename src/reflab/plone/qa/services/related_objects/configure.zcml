@@ -3,12 +3,12 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:plone="http://namespaces.plone.org/plone">
 
-  <adapter factory=".get.RelatedObjects" name="related-objects"/>
+  <!-- <adapter factory=".get.RelatedObjects" name="related-objects"/>
   <adapter factory=".get.RelatedObjects" name="get-questions"/>
   <adapter factory=".get.RelatedObjects" name="get-similars"/>
   <adapter factory=".get.RelatedObjects" name="get-followers"/>
   <adapter factory=".post.InsertPost" name="follow"/>
-  <adapter factory=".post.InsertPost" name="insert_post"/>
+  <adapter factory=".post.InsertPost" name="insert_post"/> -->
 
 
   <plone:service

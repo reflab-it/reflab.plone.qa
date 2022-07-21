@@ -9,18 +9,19 @@
 
     <h1 class="documentFirstHeading">${view/title}</h1>
 
-
-
-
    <div class="pat-autotoc autotabs"
          data-pat-autotoc="section:fieldset;levels:legend;">
        <fieldset>
          <legend>Questions</legend>
-         <div>
-           Lorem ipsum dolor sit amet, ex nam odio ceteros fastidii,
-           id porro lorem pro, homero facilisis in cum.
-           At doming voluptua indoctum mel, natum noster similique ne mel.
-         </div>
+         <dl>
+            <tal:question repeat="item view/questions">
+            <dt><a href="${item/absolute_url}">${item/title}</a></dt>
+            <dd>
+                <strong>Answers:</strong> ${item/answer_count}
+                <strong>Points:</strong> ${item/points} -
+            </dd>
+            </tal:question>
+         </dl>
        </fieldset>
        <fieldset>
          <legend>Settings</legend>
