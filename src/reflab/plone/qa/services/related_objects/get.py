@@ -59,7 +59,6 @@ def get_answer_fields(item):
         'vote_up_count': int(len(item.vote_up_list)),
         'vote_down_count': int(len(item.vote_down_list)),
         'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
-        'tags': item.tags or None,
         'comments': comments,
         'hasComments': len(comments) > 0,
     }
@@ -88,7 +87,6 @@ def get_comment_fields(item):
         'vote_up_count': int(len(item.vote_up_list)),
         'vote_down_count': int(len(item.vote_down_list)),
         'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
-        'tags': item.tags or None,
     }
 
 
@@ -139,7 +137,7 @@ class RelatedObjectsGetSimilars(Service):
     def reply(self):
         try:
             all_q = [x.getObject() for x in api.content.find(context=self.context.getParentNode(), depth=1, portal_type='qa Question')]
-            all_scores = [{'q':x,'s':len( set(x.tags) & set(self.context.tags) )} for x in all_q if x.id != self.context.id]
+            all_scores = [{'q':x,'s':len( set(x.subjects) & set(self.context.subjects) )} for x in all_q if x.id != self.context.id]
             similar = [get_question_fields(x['q']) for x in sorted(all_scores, key = lambda d: d['s'], reverse=True)[0:10]]
             return {
                 'status': 'ok',

@@ -84,16 +84,22 @@ class IQaQuestion(model.Schema):
 
     directives.read_permission(followed_by='cmf.ReviewPortalContent')
     directives.write_permission(followed_by='cmf.ReviewPortalContent')
-    followed_by = schema.TextLine(
+    followed_by = schema.List(
         title=_(u'Followed by'),
-        required=False
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
     )
 
     directives.read_permission(favorited_by='cmf.ReviewPortalContent')
     directives.write_permission(favorited_by='cmf.ReviewPortalContent')    
-    favorited_by = schema.TextLine(
+    favorited_by = schema.List(
         title=_(u'Favorited by'),
-        required=False 
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
     )
 
     directives.read_permission(closed_by='cmf.ReviewPortalContent')
