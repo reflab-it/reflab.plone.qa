@@ -32,12 +32,6 @@
   <property name="behaviors" purge="false">
     <element value="plone.namefromtitle"/>
     <element value="plone.shortname"/>
-    <!-- <element value="plone.ownership"/> -->
-    <element value="plone.publication"/>
-    <element value="plone.categorization"/>
-    <!-- <element value="plone.basic"/> -->
-    <element value="plone.locking" />
-    <element value="plone.versioning" />
   </property>
 
   <property name="add_view_expr">string:${folder_url}/++add++qa Question</property>
