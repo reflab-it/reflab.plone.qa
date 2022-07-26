@@ -28,6 +28,7 @@ def get_question_fields(item):
         'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
         'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
         'view_count': item.view_count(),
+        'comment_count': item.commment_count(),
         'vote_up_count': item.voted_up_count(),
         'vote_down_count': item.voted_down_count(),
         'vote_count': item.points(),
@@ -69,9 +70,7 @@ def get_comment_fields(item):
         'title': item.title,
         'description': item.description,
         'author': item.author,
-        'closed': item.closed,
         'text': item.text,
-        'approved': item.approved,
         'deleted': item.deleted,
         '_meta':
         {
@@ -80,15 +79,10 @@ def get_comment_fields(item):
         },
         'link': item.absolute_url(),
         'rel': item.absolute_url(1),
-        'subs': len(item.items()),
         'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
         'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
         'view_count': int(len(item.viewed_by)),
-        'vote_up_count': int(len(item.vote_up_list)),
-        'vote_down_count': int(len(item.vote_down_list)),
-        'vote_count': int(len(item.vote_up_list)) - int(len(item.vote_down_list)),
     }
-
 
 class RelatedObjectsGet(Service):
 
@@ -97,11 +91,18 @@ class RelatedObjectsGet(Service):
         result = {
             'related-objects': {
                 'items': [],
+                'answers': [],
+                'comments': [],
                 'parent': get_question_fields(self.context),
             }
         }
-        for item in self.context.listFolderContents(contentFilter={"portal_type" : "qa Answer"}):
-            result['related-objects']['items'].append(get_answer_fields(item))
+        for answer in self.context.listFolderContents(contentFilter={"portal_type" : "qa Answer"}):
+            result['related-objects']['answers'].append(get_answer_fields(answer))
+            result['related-objects']['items'].append(get_answer_fields(answer))
+        
+        for comment in self.context.listFolderContents(contentFilter={"portal_type" : "qa Comment"}):
+            result['related-objects']['comments'].append(get_comment_fields(comment))
+
         return result 
 
     def reply(self):

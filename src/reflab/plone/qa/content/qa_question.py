@@ -158,7 +158,10 @@ class QaQuestion(Container):
         return len(self.followed_by)
 
     def answer_count(self):
-        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Answer"}))        
+        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Answer"}))
+    
+    def commment_count(self):
+        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Comment"}))
 
     def voted_up_count(self):
         return len(self.voted_up_by)
