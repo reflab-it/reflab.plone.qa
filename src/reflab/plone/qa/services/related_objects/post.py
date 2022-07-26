@@ -101,9 +101,9 @@ class InsertPostObj(Service):
         if _type == 'comment':
             try:
                 obj = api.content.find(context=self.context, id=_parent_id)
-                answer = obj[0].getObject()
+                parent = obj[0].getObject()
                 res = api.content.create(
-                    container=answer,
+                    container=parent,
                     type='qa Comment',
                     id=str(uuid.uuid4()),
                     author=user_name,
