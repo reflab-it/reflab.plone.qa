@@ -90,7 +90,6 @@ class RelatedObjectsGet(Service):
     def _related_objects(self):
         result = {
             'related-objects': {
-                'items': [],
                 'answers': [],
                 'comments': [],
                 'parent': get_question_fields(self.context),
@@ -98,7 +97,6 @@ class RelatedObjectsGet(Service):
         }
         for answer in self.context.listFolderContents(contentFilter={"portal_type" : "qa Answer"}):
             result['related-objects']['answers'].append(get_answer_fields(answer))
-            result['related-objects']['items'].append(get_answer_fields(answer))
         
         for comment in self.context.listFolderContents(contentFilter={"portal_type" : "qa Comment"}):
             result['related-objects']['comments'].append(get_comment_fields(comment))
