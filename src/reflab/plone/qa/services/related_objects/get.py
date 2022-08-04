@@ -33,6 +33,7 @@ def get_question_fields(item):
         'vote_down_count': item.voted_down_count(),
         'vote_count': item.points(),
         'tags': item.subjects or None,
+        'followed_by': item.followed_by
     }
 
 def get_answer_fields(item):
