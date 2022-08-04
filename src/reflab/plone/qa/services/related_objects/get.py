@@ -149,6 +149,25 @@ class RelatedObjectsGetSimilars(Service):
                 'similar': []
             }
 
+class RelatedObjectsGetFollowed(Service):
+    def reply(self):
+        try:
+            # get all question, we should supposed we are on tree node
+            all_q = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
+            # get current user's username
+            username = api.user.get_current().getUserName()
+            followed = [i for i in all_q if username in i.followed_by]
+            return {
+                'status': 'ok',
+                'followed': followed
+            }
+        except Exception as e:
+            return {
+                'status': 'error',
+                'followed': [],
+                'msg': str(e)
+            }
+
 class RelatedObjectsGetQuestions(Service):
 
     @property
