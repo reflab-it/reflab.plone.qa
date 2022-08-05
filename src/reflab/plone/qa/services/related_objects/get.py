@@ -156,7 +156,7 @@ class RelatedObjectsGetFollowed(Service):
             all_q = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
             # get current user's username
             username = api.user.get_current().getUserName()
-            followed = [i for i in all_q if username in i.followed_by]
+            followed = [get_question_fields(i) for i in all_q if username in i.followed_by]
             return {
                 'status': 'ok',
                 'followed': followed
