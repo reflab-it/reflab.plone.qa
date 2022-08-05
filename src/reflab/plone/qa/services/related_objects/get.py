@@ -150,6 +150,7 @@ class RelatedObjectsGetSimilars(Service):
             }
 
 class RelatedObjectsGetFollowed(Service):
+    # get all question followed by crurrent user
     def reply(self):
         try:
             # get all question, we should supposed we are on tree node
@@ -165,6 +166,30 @@ class RelatedObjectsGetFollowed(Service):
             return {
                 'status': 'error',
                 'followed': [],
+                'msg': str(e)
+            }
+
+class RelatedObjectsGetVoted(Service):
+    # get all question voted by crurrent user
+    def reply(self):
+        try:
+            # get all question, we should supposed we are on tree node
+            all_q = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
+            # get current user's username
+            username = api.user.get_current().getUserName()
+            voted_up_list = [get_question_fields(i) for i in all_q if username in i.voted_up_by]
+            voted_down_list = [get_question_fields(i) for i in all_q if username in i.voted_down_by]
+            return {
+                'status': 'ok',
+                'voted': {
+                    'up': voted_up_list,
+                    'down': voted_down_list
+                }
+            }
+        except Exception as e:
+            return {
+                'status': 'error',
+                'voted': None,
                 'msg': str(e)
             }
 
