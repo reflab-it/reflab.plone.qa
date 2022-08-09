@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.textfield import RichText
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
@@ -12,33 +12,54 @@ from zope.interface import implementer
 class IQaAnswer(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaAnswer
     """
+    fieldset(
+        'activity', 
+        label=u'Activity',
+        fields=('creators', 'approved',  'voted_up_by', 'voted_down_by')
+    )
 
-    fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at') )
-    fieldset( 'delete', label=u'Delete', fields=('deleted', 'deleted_at', 'deleted_by'))
-    fieldset( 'lock', label=u'Lock', fields=('locked', 'locked_at', 'locked_by'))
-    fieldset('score', label=u'Scoring System', fields=('vote_up_list', 'vote_down_list'))
+    # User fields
+    text = schema.Text(
+        title=_('label_qa_answer_text', default='Text'), 
+        required=True 
+    )
 
-    text = schema.Text( title=_(u'Text'), required=True )
-    author = schema.TextLine( title=_(u'Author'), required=False )
-    added_at = schema.Datetime( title =_(u'Added At'),required=False )
-    approved = schema.Bool( title=_(u'Approved'), required=False )
-    deleted = schema.Bool( title=_(u'Deleted'), required=False )
-    deleted_at = schema.Datetime( title =_(u'Deleted at'),required=False )
-    deleted_by = schema.TextLine( title=_(u'Locked by'), required=False )
-    locked = schema.Bool( title=_(u'Locked'), required=False )
-    locked_at = schema.Datetime( title =_(u'Locked at'),required=False )
-    locked_by = schema.TextLine( title=_(u'Locked by'), required=False )
+    # Reviewer fields
+    directives.read_permission(creators='cmf.ReviewPortalContent')
+    directives.write_permission(creators='cmf.ReviewPortalContent')
+    directives.widget(
+        'creators',
+        AjaxSelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Users'
+    ) 
+    creators = schema.Tuple(
+        title=_('label_qa_answer_creators', 'Authors'),
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=(),
+    )       
 
-    vote_up_list = schema.List(
-        title=u'Vote Up List',
+    directives.read_permission(approved='cmf.ReviewPortalContent')
+    directives.write_permission(approved='cmf.ReviewPortalContent')
+    approved = schema.Bool(
+        title=_(u'Approved'),
+        required=False
+    )    
+
+    directives.read_permission(voted_up_by='cmf.ReviewPortalContent')
+    directives.write_permission(voted_up_by='cmf.ReviewPortalContent')
+    voted_up_by = schema.List(
+        title=u'Voted up by',
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
         default=[],
     )
 
-    vote_down_list = schema.List(
-        title=u'Vote Down List',
+    directives.read_permission(voted_down_by='cmf.ReviewPortalContent')
+    directives.write_permission(voted_down_by='cmf.ReviewPortalContent')
+    voted_down_by = schema.List(
+        title=u'Voted down by',
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
@@ -50,3 +71,12 @@ class IQaAnswer(model.Schema):
 class QaAnswer(Container):
     """ Content-type class for IQaAnswer
     """
+
+    def voted_up_count(self):
+        return len(self.voted_up_by)
+
+    def voted_down_count(self):
+        return len(self.voted_down_by)
+
+    def points(self):
+        return self.voted_up_count() - self.voted_down_count()        

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
-from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
@@ -46,6 +45,8 @@ class IQaQuestion(model.Schema):
         vocabulary='plone.app.vocabularies.Keywords' # TODO
     )
 
+
+    # Reviewer fields
     directives.read_permission(creators='cmf.ReviewPortalContent')
     directives.write_permission(creators='cmf.ReviewPortalContent')
     directives.widget(
@@ -61,8 +62,8 @@ class IQaQuestion(model.Schema):
         missing_value=(),
     )    
 
-    directives.read_permission(creators='cmf.ReviewPortalContent')
-    directives.write_permission(creators='cmf.ReviewPortalContent')
+    directives.read_permission(approved='cmf.ReviewPortalContent')
+    directives.write_permission(approved='cmf.ReviewPortalContent')
     approved = schema.Bool(
         title=_(u'Approved'),
         required=False
@@ -122,7 +123,7 @@ class IQaQuestion(model.Schema):
     directives.read_permission(voted_down_by='cmf.ReviewPortalContent')
     directives.write_permission(voted_down_by='cmf.ReviewPortalContent')
     voted_down_by = schema.List(
-        title=u'Vote down by',
+        title=u'Voted down by',
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
