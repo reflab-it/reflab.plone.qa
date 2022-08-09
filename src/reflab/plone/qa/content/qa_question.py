@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.textfield import RichText
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.app.z3cform.widget import DatetimeFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
@@ -13,68 +15,159 @@ class IQaQuestion(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaQuestion
     """
 
-    fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at', 'tags') )
-    fieldset( 'status', label=u'Status', fields=('closed', 'deleted', 'approved'))
-    fieldset( 'points', label=u'Points', fields=('view_count', 'favourite_count',
-        'answer_count', 'points'))
-    fieldset( 'activity', label=u'Activity', fields=('last_activity_at',
-        'last_activity_by', 'followed_by', 'favorited_by', 'closed_by'))
-    fieldset('score', label=u'Scoring System', fields=('vote_up_list', 'vote_down_list',
-        'viewed_by'))
+    fieldset(
+        'activity', 
+        label=u'Activity',
+        fields=('creators', 'approved', 'last_activity_at', 'last_activity_by',
+            'followed_by', 'favorited_by', 'closed_by', 'voted_up_by',
+            'voted_down_by', 'viewed_by')
+    )
 
-    text = schema.Text( title=_(u'Text'), required=False )
-    author = schema.TextLine( title=_(u'Author'), required=False )
-    author_full_name = schema.TextLine( title=_(u'Author Full Name'), required=False )
-    added_at = schema.Datetime( title =_(u'Added At'),required=False )
+    # User fields
+    title = schema.TextLine(
+        title=_('label_qa_question_title', default='Question'),
+        required=True
+    )
 
-    closed = schema.Bool( title=_(u'Closed'), required=False )
-    deleted = schema.Bool( title=_(u'Deleted'), required=False )
-    approved = schema.Bool( title=_(u'Approved'), required=False )
+    text = schema.Text(
+        title=_('label_qa_question_text', default='Question details'), 
+        required=False 
+    )
 
-    view_count = schema.Int( title=_(u'view_count'), required=False )
-    favourite_count = schema.Int( title=_(u'favourite_count'), required=False )
-    answer_count = schema.Int( title=_(u'answer_count'), required=False )
-    points = schema.Int( title=_(u'points'), required=False )
+    subjects = schema.Tuple(
+        title=_(u'label_tags', default=u'Tags'),
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=(),
+    )
+    directives.widget(
+        'subjects',
+        AjaxSelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Keywords' # TODO
+    )
 
-    last_activity_at = schema.Datetime( title =_(u'Last activity at'),required=False )
-    last_activity_by = schema.TextLine( title=_(u'Last activity by'), required=False )
-    followed_by = schema.TextLine( title=_(u'Followed by'), required=False )
-    favorited_by = schema.TextLine( title=_(u'Favorited by'), required=False )
-    closed_by = schema.TextLine( title=_(u'Closed by'), required=False )
+    directives.read_permission(creators='cmf.ReviewPortalContent')
+    directives.write_permission(creators='cmf.ReviewPortalContent')
+    directives.widget(
+        'creators',
+        AjaxSelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Users'
+    )    
 
-    tags = schema.List(
-        title=u'Tags',
+    creators = schema.Tuple(
+        title=_('label_qa_question_creators', 'Authors'),
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=(),
+    )    
+
+    directives.read_permission(creators='cmf.ReviewPortalContent')
+    directives.write_permission(creators='cmf.ReviewPortalContent')
+    approved = schema.Bool(
+        title=_(u'Approved'),
+        required=False
+    )
+
+    directives.read_permission(last_activity_at='cmf.ReviewPortalContent')
+    directives.write_permission(last_activity_at='cmf.ReviewPortalContent')
+    last_activity_at = schema.Datetime(
+        title=_(u'Last activity at'),
+        required=False 
+    )
+
+    directives.read_permission(last_activity_by='cmf.ReviewPortalContent')
+    directives.write_permission(last_activity_by='cmf.ReviewPortalContent')    
+    last_activity_by = schema.TextLine(
+        title=_(u'Last activity by'),
+        required=False
+    )
+
+    directives.read_permission(followed_by='cmf.ReviewPortalContent')
+    directives.write_permission(followed_by='cmf.ReviewPortalContent')
+    followed_by = schema.List(
+        title=_(u'Followed by'),
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
         default=[],
     )
 
-    vote_up_list = schema.List(
-        title=u'Vote Up List',
+    directives.read_permission(favorited_by='cmf.ReviewPortalContent')
+    directives.write_permission(favorited_by='cmf.ReviewPortalContent')    
+    favorited_by = schema.List(
+        title=_(u'Favorited by'),
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
         default=[],
     )
 
-    vote_down_list = schema.List(
-        title=u'Vote Down List',
+    directives.read_permission(closed_by='cmf.ReviewPortalContent')
+    directives.write_permission(closed_by='cmf.ReviewPortalContent')
+    closed_by = schema.TextLine(
+        title=_(u'Closed by'),
+        required=False
+    )
+
+    directives.read_permission(voted_up_by='cmf.ReviewPortalContent')
+    directives.write_permission(voted_up_by='cmf.ReviewPortalContent')
+    voted_up_by = schema.List(
+        title=u'Voted up by',
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
         default=[],
     )
 
+    directives.read_permission(voted_down_by='cmf.ReviewPortalContent')
+    directives.write_permission(voted_down_by='cmf.ReviewPortalContent')
+    voted_down_by = schema.List(
+        title=u'Vote down by',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
+    directives.read_permission(viewed_by='cmf.ReviewPortalContent')
+    directives.write_permission(viewed_by='cmf.ReviewPortalContent')
     viewed_by = schema.List(
-        title=u'Viewed By',
+        title=u'Viewed by',
         value_type=schema.TextLine(),
         required=False,
         missing_value=[],
         default=[],
     )
 
+
+from AccessControl.SecurityInfo import ClassSecurityInfo
 @implementer(IQaQuestion)
 class QaQuestion(Container):
     """ Content-type class for IQaQuestion
     """
+
+    security = ClassSecurityInfo()
+
+    def view_count(self):
+        return len(self.viewed_by)
+
+    def favourite_count(self):
+        return len(self.favorited_by)
+        
+    def followed_count(self):
+        return len(self.followed_by)
+
+    def answer_count(self):
+        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Answer"}))
+    
+    def commment_count(self):
+        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Comment"}))
+
+    def voted_up_count(self):
+        return len(self.voted_up_by)
+
+    def voted_down_count(self):
+        return len(self.voted_down_by)
+
+    def points(self):
+        return self.voted_up_count() - self.voted_down_count()

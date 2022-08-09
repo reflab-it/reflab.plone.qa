@@ -7,10 +7,10 @@
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">qa Comment</property>
+      name="title">Comment</property>
   <property
       i18n:translate=""
-      name="description">comment for the qa</property>
+      name="description"></property>
 
   <property name="allow_discussion">False</property>
   <property name="factory">qa Comment</property>

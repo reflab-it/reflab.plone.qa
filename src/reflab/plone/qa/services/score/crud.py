@@ -83,15 +83,15 @@ class VoteUp(Service):
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
-            result = remove_and_add_if_need(userid, self.context.vote_down_list, self.context.vote_up_list)
+            result = remove_and_add_if_need(userid, self.context.voted_down_by, self.context.voted_up_by)
             if result['first_data_set'] is not None:
-                self.context.vote_down_list = result['first_data_set']
+                self.context.voted_down_by = result['first_data_set']
             if result['second_data_set'] is not None:
-                self.context.vote_up_list = result['second_data_set']
+                self.context.voted_up_by = result['second_data_set']
             return {
                 'status': 'ok',
                 'message': result['action'],
-                'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
+                'count': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
             }
         else:
             return {
@@ -111,15 +111,15 @@ class VoteDown(Service):
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
-            result = remove_and_add_if_need(userid, self.context.vote_up_list, self.context.vote_down_list)
+            result = remove_and_add_if_need(userid, self.context.voted_up_by, self.context.voted_down_by)
             if result['first_data_set'] is not None:
-                self.context.vote_up_list = result['first_data_set']
+                self.context.voted_up_by = result['first_data_set']
             if result['second_data_set'] is not None:
-                self.context.vote_down_list = result['second_data_set']
+                self.context.voted_down_by = result['second_data_set']
             return {
                 'status': 'ok',
                 'message': result['action'],
-                'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
+                'count': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
             }
         else:
             return {
@@ -135,13 +135,13 @@ class VoteInfo(Service):
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
-            vote_up = userid in self.context.vote_down_list
-            vote_down = userid in self.context.vote_down_list
+            vote_up = userid in self.context.voted_down_by
+            vote_down = userid in self.context.voted_down_by
             return {
                 'status': 'ok',
                 'vote_up': vote_up,
                 'vote_down': vote_down,
-                'count': int(len(self.context.vote_up_list)) - int(len(self.context.vote_down_list))
+                'count': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
             }
         else:
             return {

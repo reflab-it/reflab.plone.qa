@@ -22,6 +22,14 @@ msgstr ""
 msgid "Answer"
 msgstr "Risposta"
 
+#: ./profiles/default/types/qa_Answer.xml
+msgid "Answer"
+msgstr "Risposta"
+
+#: ./profiles/default/types/qa_Comment.xml
+msgid "Comment"
+msgstr "Commento"
+
 #: ./configure.zcml:27
 msgid "Installs the reflab.plone.qa add-on."
 msgstr ""
