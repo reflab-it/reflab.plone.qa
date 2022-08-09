@@ -9,6 +9,7 @@
   <adapter factory=".get.RelatedObjects" name="get-followers"/>
   <adapter factory=".get.RelatedObjects" name="get-followed-questions"/>
   <adapter factory=".get.RelatedObjects" name="get-voted-questions"/>
+  <adapter factory=".get.RelatedObjects" name="get-question-stat"/>
   <adapter factory=".post.InsertPost" name="follow"/>
   <adapter factory=".post.InsertPost" name="insert_post"/> -->
 
@@ -58,6 +59,14 @@
     for="zope.interface.Interface"
     factory=".get.RelatedObjectsGetVoted"
     name="@get-voted-questions"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    for="zope.interface.Interface"
+    factory=".get.QuestionStats"
+    name="@get-question-stat"
     permission="zope2.View"
     />
 

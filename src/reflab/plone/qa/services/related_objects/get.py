@@ -102,6 +102,12 @@ class RelatedObjectsGet(Service):
         for comment in self.context.listFolderContents(contentFilter={"portal_type" : "qa Comment"}):
             result['related-objects']['comments'].append(get_comment_fields(comment))
 
+        # getting username
+        username = api.user.get_current().getUserName()
+        if username not in self.context.viewed_by:
+            tmp = self.context.viewed_by.copy()
+            tmp.append(username)
+
         return result 
 
     def reply(self):
@@ -311,3 +317,25 @@ class RelatedObjectsGetQuestions(Service):
             'total_questions': len(only_question_objects),
             'number_of_current_result': len(_tmp),
         }
+
+class QuestionStats(Service):
+    def reply(self):
+        try:
+            data = get_question_fields(self.context)
+            result = {
+                'status': 'ok',
+                'data': {
+                    'asked': data['added_at'],
+                    'seen': data['view_count'],
+                    'updated': data['last_activity_at'],
+                }
+            }
+            return result
+
+        except Exception as e:
+            return {
+                'status': 'error',
+                'message': str(e),
+                'data': {}
+            }
+
