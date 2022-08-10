@@ -1,8 +1,13 @@
-<object name="portal_workflow" meta_type="Plone Workflow Tool">
-    <object name="qa_question_workflow" meta_type="Workflow"/>
-        <bindings>
-            <type type_id="qa Question">
-                <bound-workflow workflow_id="qa_question_workflow"/>
-            </type>
+<object name="portal_workflow"
+    meta_type="Plone Workflow Tool">
+    <object name="qa_question_workflow"
+        meta_type="Workflow" />
+    <bindings>
+        <type type_id="qa Question">
+            <bound-workflow workflow_id="qa_question_workflow" />
+        </type>
+        <type type_id="qa Answer">
+            <bound-workflow workflow_id="qa_answer_workflow" />
+        </type>        
     </bindings>
 </object>
