@@ -29,6 +29,14 @@
     />
 
   <plone:service
+    method="POST"
+    for="...content.qa_answer.IQaAnswer"
+    factory=".crud.VoteDown"
+    name="@vote-down"
+    permission="zope2.View"
+    />
+
+  <plone:service
     method="GET"
     for="...content.qa_question.IQaQuestion"
     factory=".crud.VoteInfo"
