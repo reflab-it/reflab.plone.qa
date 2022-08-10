@@ -4,12 +4,17 @@
         meta_type="Workflow" />
     <object name="qa_answer_workflow"
         meta_type="Workflow" />        
+    <object name="qa_comment_workflow"
+        meta_type="Workflow" />  
     <bindings>
         <type type_id="qa Question">
             <bound-workflow workflow_id="qa_question_workflow" />
         </type>
         <type type_id="qa Answer">
             <bound-workflow workflow_id="qa_answer_workflow" />
+        </type>        
+        <type type_id="qa Comment">
+            <bound-workflow workflow_id="qa_comment_workflow" />
         </type>        
     </bindings>
 </object>

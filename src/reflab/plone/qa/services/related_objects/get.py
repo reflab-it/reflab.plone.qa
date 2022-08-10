@@ -67,11 +67,11 @@ def get_answer_fields(item):
 def get_comment_fields(item):
     return {
         'id': item.id,
-        'title': item.title,
-        'description': item.description,
-        'author': item.author,
+        # 'title': item.title,
+        # 'description': item.description,
+        'author': item.creators and item.creators[0] or None,
         'text': item.text,
-        'deleted': item.deleted,
+        'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
         {
             'type': item.Type(),
@@ -79,9 +79,9 @@ def get_comment_fields(item):
         },
         'link': item.absolute_url(),
         'rel': item.absolute_url(1),
-        'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
-        'added_at': item.added_at and item.added_at.isoformat() or '1976-04-29',
-        'view_count': int(len(item.viewed_by)),
+        # 'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+        'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
+        # 'view_count': int(len(item.viewed_by)),
     }
 
 class RelatedObjectsGet(Service):

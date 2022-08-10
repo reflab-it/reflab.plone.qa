@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.textfield import RichText
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
@@ -13,20 +13,33 @@ from zope.interface import implementer
 class IQaComment(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaComment
     """
-    fieldset( 'main', label=u'Body', fields=('text', 'author', 'added_at') )
-    fieldset( 'delete', label=u'Delete', fields=('deleted', 'deleted_at', 'deleted_by'))
-    fieldset( 'lock', label=u'Lock', fields=('locked', 'locked_at', 'locked_by'))
 
-    text = schema.Text( title=_(u'Text'), required=True )
-    author = schema.TextLine( title=_(u'Author'), required=False )
-    added_at = schema.Datetime( title =_(u'Added At'),required=False )
-    approved = schema.Bool( title=_(u'Approved'), required=False )
-    deleted = schema.Bool( title=_(u'Deleted'), required=False )
-    deleted_at = schema.Datetime( title =_(u'Deleted at'),required=False )
-    deleted_by = schema.TextLine( title=_(u'Locked by'), required=False )
-    locked = schema.Bool( title=_(u'Locked'), required=False )
-    locked_at = schema.Datetime( title =_(u'Locked at'),required=False )
-    locked_by = schema.TextLine( title=_(u'Locked by'), required=False )
+    fieldset(
+        'activity', 
+        label=u'Activity',
+        fields=('creators',)
+    )
+
+    # User fields
+    text = schema.Text(
+        title=_('label_qa_answer_text', default='Text'), 
+        required=True 
+    )
+
+    # Reviewer fields
+    directives.read_permission(creators='cmf.ReviewPortalContent')
+    directives.write_permission(creators='cmf.ReviewPortalContent')
+    directives.widget(
+        'creators',
+        AjaxSelectFieldWidget,
+        vocabulary='plone.app.vocabularies.Users'
+    ) 
+    creators = schema.Tuple(
+        title=_('label_qa_answer_creators', 'Authors'),
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=(),
+    )   
 
 @implementer(IQaComment)
 class QaComment(Container):

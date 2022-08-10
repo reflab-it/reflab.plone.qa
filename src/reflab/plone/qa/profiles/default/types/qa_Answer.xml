@@ -30,7 +30,7 @@
   <property name="model_source"></property>
   <property name="schema">reflab.plone.qa.content.qa_answer.IQaAnswer</property>
 
-  <property name="behaviors" purge="false">
+  <property name="behaviors" purge="true">
     <element value="plone.shortname"/>>
   </property>
 
