@@ -80,6 +80,7 @@ class VoteUp(Service):
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
+        #import pdb; pdb.set_trace()
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
