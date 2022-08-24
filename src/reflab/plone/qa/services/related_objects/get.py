@@ -14,7 +14,7 @@ def get_question_fields(item):
         'description': item.description,
         'author': item.creators and item.creators[0] or None,
         'closed': api.content.get_state(item) == 'closed',
-        'text': item.text.output_relative_to(item),
+        'text': item.text and item.text.output_relative_to(item) or '',
         'approved': item.approved,
         'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
@@ -43,7 +43,7 @@ def get_answer_fields(item):
         # 'title': item.title,
         # 'description': item.description,
         'author': item.creators and item.creators[0] or None,
-        'text': item.text.output_relative_to(item),
+        'text': item.text and item.text.output_relative_to(item) or '',
         'approved': item.approved,
         'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
