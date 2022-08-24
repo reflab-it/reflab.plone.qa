@@ -28,9 +28,12 @@ class IQaQuestion(model.Schema):
         required=True
     )
 
-    text = schema.Text(
+    text = RichText(
         title=_('label_qa_question_text', default='Question details'), 
-        required=False 
+        required=False,
+        default_mime_type='text/plain',
+        output_mime_type='text/plain',
+        allowed_mime_types=('text/plain'),         
     )
 
     subjects = schema.Tuple(

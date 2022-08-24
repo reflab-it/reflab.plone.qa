@@ -45,4 +45,14 @@
 
   <include package=".views" />
 
+  <adapter
+      factory=".transform.QATextTransformer"
+      for=".content.qa_question.IQaQuestion"
+      />
+
+  <adapter
+      factory=".transform.QATextTransformer"
+      for=".content.qa_answer.IQaAnswer"
+      />
+
 </configure>

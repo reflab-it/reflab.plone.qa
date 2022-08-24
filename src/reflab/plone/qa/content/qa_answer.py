@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.app.textfield import RichText as RichTextField
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
@@ -19,9 +20,12 @@ class IQaAnswer(model.Schema):
     )
 
     # User fields
-    text = schema.Text(
+    text = RichTextField(
         title=_('label_qa_answer_text', default='Text'), 
-        required=True 
+        required=True, 
+        default_mime_type='text/plain',
+        output_mime_type='text/plain',
+        allowed_mime_types=('text/plain'),          
     )
 
     # Reviewer fields
