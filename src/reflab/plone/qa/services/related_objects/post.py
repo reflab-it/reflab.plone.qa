@@ -6,6 +6,7 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.interface import alsoProvides
+from plone.app.textfield.value import RichTextValue
 from datetime import datetime
 import plone.protect.interfaces
 import json
@@ -89,7 +90,10 @@ class InsertPostObj(Service):
                     title=_title,
                     author=user_name,
                     added_at=datetime.now(),
-                    text=data.get('data') or ''
+                    text = RichTextValue(
+                        raw=data.get('data') or '',
+                        outputMimeType='text/plain'
+                    )
                 )
                 response['status'] = 'ok'
                 response['message'] = 'created'
@@ -127,7 +131,10 @@ class InsertPostObj(Service):
                     id=str(uuid.uuid4()),
                     author=user_name,
                     added_at=datetime.now(),
-                    text=data.get('data') or ''
+                    text = RichTextValue(
+                        raw=data.get('data') or '',
+                        outputMimeType='text/plain'
+                    )
                 )
                 response['status'] = 'ok'
                 response['message'] = 'created'
