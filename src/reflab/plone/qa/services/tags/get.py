@@ -29,8 +29,9 @@ class Tags(object):
         contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
         all_tags = []
         for question in contents:
-            for tag in question.subjects:
-                all_tags.append(tag)
+            if question.subjects is not None:
+                for tag in question.subjects:
+                    all_tags.append(tag)
         result = {
             'tag-list': all_tags
         }
