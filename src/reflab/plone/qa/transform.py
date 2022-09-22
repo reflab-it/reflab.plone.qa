@@ -23,7 +23,10 @@ class QATextTransformer(object):
             
             if filename is not None:
                 if not filename.startswith(('http://', 'https://')):
-                    url = self.context.absolute_url() + filename + '/download'
+                    _filename = filename
+                    if not filename.startswith('/'):
+                        _filename = '/' + filename
+                    url = self.context.absolute_url() + _filename + '/download'
                     return match_obj.group().replace(filename, url)
 
         return re.sub(file_regex, convert_file_text, value.raw)

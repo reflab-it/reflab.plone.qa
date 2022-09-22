@@ -142,8 +142,7 @@ class InsertPostObj(Service):
                 response['status'] = 'error'
                 response['message'] = 'unable to created'
 
-        # import pdb; pdb.set_trace()
-
+        response['id'] = res.id or None
         return response
 
 class QuestionFollow(Service):
