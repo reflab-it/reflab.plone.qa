@@ -91,6 +91,7 @@ class InsertPostObj(Service):
                     res = api.content.create(
                         container=folder,
                         type='qa Question',
+                        subjects=data.get('tags'),
                         title=_title,
                         author=user_name,
                         added_at=datetime.now(),
