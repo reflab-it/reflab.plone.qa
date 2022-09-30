@@ -84,25 +84,28 @@ class InsertPostObj(Service):
             folder = obj[0].getObject()
             try:
                 _title = data.get('title')
-                res = api.content.create(
-                    container=folder,
-                    type='qa Question',
-                    title=_title,
-                    author=user_name,
-                    added_at=datetime.now(),
-                    text = RichTextValue(
-                        raw=data.get('data') or '',
-                        outputMimeType='text/plain'
+                if _title is None or _title == '' or len(_title) < 3:
+                    response['status'] = 'error'
+                    response['message'] = 'unable to created, missing title'
+                else:
+                    res = api.content.create(
+                        container=folder,
+                        type='qa Question',
+                        title=_title,
+                        author=user_name,
+                        added_at=datetime.now(),
+                        text = RichTextValue(
+                            raw=data.get('data') or '',
+                            outputMimeType='text/plain'
+                        )
                     )
-                )
-                response['status'] = 'ok'
-                response['message'] = 'created'
+                    response['status'] = 'ok'
+                    response['message'] = 'created'
             except:
                 response['status'] = 'error'
                 response['message'] = 'unable to created'
-            #import pdb; pdb.set_trace()
 
-        if _type == 'comment':
+        elif _type == 'comment':
             try:
                 obj = api.content.find(context=self.context, id=_parent_id)
                 parent = obj[0].getObject()
@@ -120,7 +123,7 @@ class InsertPostObj(Service):
                 response['status'] = 'error'
                 response['message'] = 'unable to created'
 
-        if _type == 'reply':
+        elif _type == 'reply':
             # getting base object
             obj = api.content.find(context=self.context, id=_parent_id)
             question = obj[0].getObject()
@@ -141,6 +144,11 @@ class InsertPostObj(Service):
             except:
                 response['status'] = 'error'
                 response['message'] = 'unable to created'
+        
+        else:
+            response['status'] = 'error'
+            response['message'] = 'unable to created, wrong type'
+
 
         response['id'] = res.id or None
         return response
