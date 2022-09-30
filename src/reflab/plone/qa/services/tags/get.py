@@ -26,12 +26,15 @@ class Tags(object):
             return result
 
         # get all question
-        contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
-        all_tags = []
-        for question in contents:
-            if question.subjects is not None:
-                for tag in question.subjects:
-                    all_tags.append(tag)
+        # old way
+        # contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
+        #all_tags = []
+        #for question in contents:
+        #    if question.subjects is not None:
+        #        for tag in question.subjects:
+        #            all_tags.append(tag)
+        # new way using attribute on obj
+        all_tags = self.context.allowed_tags
         result = {
             'tag-list': all_tags
         }

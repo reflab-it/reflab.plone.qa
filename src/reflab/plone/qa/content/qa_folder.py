@@ -17,6 +17,14 @@ class IQaFolder(model.Schema):
         required=False
     )
 
+    allowed_tags = schema.List(
+        title=u'Allowed Tags',
+        value_type=schema.TextLine(),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
 
 @implementer(IQaFolder)
 class QaFolder(Container):
