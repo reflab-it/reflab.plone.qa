@@ -63,7 +63,7 @@ class IQaQuestion(model.Schema):
         value_type=schema.TextLine(),
         required=False,
         missing_value=(),
-    )    
+    )
 
     directives.read_permission(approved='cmf.ReviewPortalContent')
     directives.write_permission(approved='cmf.ReviewPortalContent')

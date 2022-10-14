@@ -78,7 +78,7 @@ class WhoIsGet(Service):
             curfolder = [f for f in self.context.contentItems() if f[0] == folder_mame]
             try:
                 _cur = curfolder[0][1]
-                contents = [x.getObject() for x in api.content.find(context=_cur, depth=1, portal_type='qa Question')]
+                contents = [x.getObject() for x in api.content.find(context=_cur, depth=1, portal_type='qa Question', Creator=user)]
                 answ_list = [x for x in contents if user in x.creators]
             except:
                 answ_list = []
