@@ -24,19 +24,15 @@ class Tags(object):
         }
         if not expand:
             return result
-
-        # get all question
-        # old way
-        # contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
-        #all_tags = []
-        #for question in contents:
-        #    if question.subjects is not None:
-        #        for tag in question.subjects:
-        #            all_tags.append(tag)
-        # new way using attribute on obj
-        all_tags = self.context.allowed_tags
+        # old compatible api
+        all_tags = [i['tag_name'] for i in self.context.datagrid_tags]
+        # all information
+        raw = [{'id': i['tag_uid'], 
+                'name': i['tag_name'],
+                'description': i['tag_description'].output } for i in self.context.datagrid_tags]
         result = {
-            'tag-list': all_tags
+            'tag-list': all_tags,
+            'raw': raw
         }
 
         # return data

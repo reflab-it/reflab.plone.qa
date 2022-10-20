@@ -5,8 +5,28 @@ from plone.dexterity.content import Container
 from plone.supermodel import model
 from reflab.plone.qa import _
 from zope import schema
-from zope.interface import implementer
+from zope.interface import implementer, Interface
+from collective.z3cform.datagridfield import DataGridFieldFactory
+from collective.z3cform.datagridfield import DictRow
+from plone.autoform import directives
+from plone.supermodel import model
 
+class ITagRowSchema(Interface):
+
+    tag_uid = schema.TextLine(
+        title=u'uid',
+        required=False,
+    )
+    
+    tag_name = schema.TextLine(
+        title=u'name',
+        required=False,
+    )
+
+    tag_description = RichText(
+        title=u'description',
+        required=False,
+    )
 
 class IQaFolder(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaFolder
@@ -17,13 +37,13 @@ class IQaFolder(model.Schema):
         required=False
     )
 
-    allowed_tags = schema.List(
+    datagrid_tags = schema.List(
         title=u'Allowed Tags',
-        value_type=schema.TextLine(),
-        required=False,
-        missing_value=[],
+        value_type=DictRow(title=u'Tags', schema=ITagRowSchema),
         default=[],
+        required=False,
     )
+    directives.widget('datagrid_tags', DataGridFieldFactory)
 
 
 @implementer(IQaFolder)

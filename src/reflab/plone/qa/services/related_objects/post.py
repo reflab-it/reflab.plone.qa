@@ -93,7 +93,7 @@ class InsertPostObj(Service):
                         type='qa Question',
                         subjects=data.get('tags'),
                         title=_title,
-                        author=user_name,
+                        creators=(user_name,),
                         added_at=datetime.now(),
                         text = RichTextValue(
                             raw=data.get('data') or '',
@@ -114,7 +114,7 @@ class InsertPostObj(Service):
                     container=parent,
                     type='qa Comment',
                     id=str(uuid.uuid4()),
-                    author=user_name,
+                    creators=(user_name,),
                     added_at=datetime.now(),
                     text=data.get('data') or ''
                 )
@@ -133,7 +133,7 @@ class InsertPostObj(Service):
                     container=question,
                     type='qa Answer',
                     id=str(uuid.uuid4()),
-                    author=user_name,
+                    creators=(user_name,),
                     added_at=datetime.now(),
                     text = RichTextValue(
                         raw=data.get('data') or '',
