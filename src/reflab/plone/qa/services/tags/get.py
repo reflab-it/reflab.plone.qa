@@ -25,14 +25,17 @@ class Tags(object):
         if not expand:
             return result
         # old compatible api
-        all_tags = [i['tag_name'] for i in self.context.datagrid_tags]
+        all_tags = [i['name'] for i in self.context.datagrid_tags]
         # all information
-        raw = [{'id': i['tag_uid'], 
-                'name': i['tag_name'],
-                'description': i['tag_description'].output } for i in self.context.datagrid_tags]
+        raw = [{'id': i['uid'], 
+                'name': i['name'],
+                'popular': i['popular'],
+                'description': i['description'] } for i in self.context.datagrid_tags]
+        popular = [i['name'] for i in raw if i['popular']]
         result = {
             'tag-list': all_tags,
-            'raw': raw
+            'raw': raw,
+            'popular': popular,
         }
 
         # return data
@@ -63,15 +66,29 @@ class TagsInfo(Service):
 class BestTags(Service):
 
     def reply(self):
-        tmp = Tags(self.context, self.request)
-        raw_tags = tmp(expand=True)['tag-list']
-        tmp = {}
-        for tag in raw_tags:
-            if tag in tmp:
-                tmp[tag] = tmp[tag] + 1
-            else:
-                tmp[tag] = 1
-        tmp = list(tmp.items())
-        by_rank = sorted(tmp, key=lambda x: -x[1])
-        top25 = [x[0] for x in by_rank[0:25]]
+        by_rank = []
+        all_tags = None
+        fast_way = True #False
+        if not fast_way:
+            contents = [x.getObject() for x in api.content.find(context=self.context, depth=1, portal_type='qa Question')]
+            all_tags = []
+            for question in contents:
+                if question.subjects is not None:
+                    for tag in question.subjects:
+                        all_tags.append(tag)
+            tmp = {}
+            for tag in all_tags:
+                if tag in tmp:
+                    tmp[tag] = tmp[tag] + 1
+                else:
+                    tmp[tag] = 1
+            tmp = list(tmp.items())
+            by_rank = sorted(tmp, key=lambda x: -x[1])
+            top25 = [x[0] for x in by_rank[0:25]]
+        else:
+            # fast reading from inserted tags
+            tmp = Tags(self.context, self.request)
+            all_tags = tmp(expand=True)['popular']
+            top25 = [x for x in all_tags[0:25]]
+        
         return top25

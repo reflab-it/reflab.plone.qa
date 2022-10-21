@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from email.policy import default
 from plone.app.textfield import RichText
 from plone.autoform import directives
 from plone.dexterity.content import Container
@@ -13,19 +14,25 @@ from plone.supermodel import model
 
 class ITagRowSchema(Interface):
 
-    tag_uid = schema.TextLine(
+    uid = schema.TextLine(
         title=u'uid',
         required=False,
     )
     
-    tag_name = schema.TextLine(
+    name = schema.TextLine(
         title=u'name',
         required=False,
     )
 
-    tag_description = RichText(
+    description = schema.Text(
         title=u'description',
         required=False,
+    )
+
+    popular = schema.Bool(
+        title=u'popular',
+        required=False,
+        default=False,
     )
 
 class IQaFolder(model.Schema):
