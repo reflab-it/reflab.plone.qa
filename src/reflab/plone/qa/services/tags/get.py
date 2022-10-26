@@ -46,10 +46,7 @@ class TagsGet(Service):
 
     def reply(self):
         tmp = Tags(self.context, self.request)
-        raw_tags = tmp(expand=True)['tag-list']
-        # unicizing
-        return list(set(raw_tags))
-
+        return tmp(expand=True)['raw']
 class TagsInfo(Service):
 
     def reply(self):
