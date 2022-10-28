@@ -261,11 +261,11 @@ class RelatedObjectsGetQuestions(Service):
             _tmp_text = set(_tmp_text)
             only_question_objects = [ i for i in only_question_objects if set([x.lower() for x in i['title'].split(' ')]).intersection(_tmp_text)]
             #only_question_objects = [ i for i in only_question_objects if text.lower() in i['title'].lower() ]
-
         # there is a tag setted?
         if self.request.has_key('tags'):
             tags = self.request.get('tags')
-            only_question_objects = [ i for i in only_question_objects if tags in i['tags'] ]
+            tagged = [ i for i in only_question_objects if i['tags'] is not None]
+            only_question_objects = [ i for i in tagged if tags in i['tags'] ]
 
         _start = 0
         _end = len(tmp)
