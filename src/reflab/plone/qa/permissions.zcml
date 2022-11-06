@@ -29,6 +29,15 @@
         title="reflab.plone.qa: Add QaFolder"
     />
 
+    <permission
+        id="reflab.plone.qa.AddQASettingsFolder"
+        title="reflab.plone.qa: Add QASettingsFolder"
+    />    
+
+    <permission
+        id="reflab.plone.qa.AddQAUserSettings"
+        title="reflab.plone.qa: Add QAUserSettings"
+    />    
 
 
   </configure>

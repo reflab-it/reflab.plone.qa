@@ -6,4 +6,6 @@
   <object name="qa Question" meta_type="Dexterity FTI"/>
   <object name="qa Answer" meta_type="Dexterity FTI"/>
   <object name="qa Comment" meta_type="Dexterity FTI"/>
+  <object name="qa Settings Folder" meta_type="Dexterity FTI"/>
+  <object name="qa User Settings" meta_type="Dexterity FTI"/>  
 </object>
