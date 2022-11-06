@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-02-18 01:52+0000\n"
+"POT-Creation-Date: 2022-11-04 11:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,8 +22,37 @@ msgstr ""
 msgid "Answer"
 msgstr ""
 
-#: ./configure.zcml:27
+#: ./content/qa_answer.py:49
+#: ./content/qa_question.py:71
+msgid "Approved"
+msgstr ""
+
+#: ./content/qa_question.py:112
+msgid "Closed by"
+msgstr ""
+
+#: ./profiles/default/types/qa_Comment.xml
+msgid "Comment"
+msgstr ""
+
+#: ./content/qa_question.py:102
+msgid "Favorited by"
+msgstr ""
+
+#: ./content/qa_question.py:92
+msgid "Followed by"
+msgstr ""
+
+#: ./configure.zcml:28
 msgid "Installs the reflab.plone.qa add-on."
+msgstr ""
+
+#: ./content/qa_question.py:78
+msgid "Last activity at"
+msgstr ""
+
+#: ./content/qa_question.py:85
+msgid "Last activity by"
 msgstr ""
 
 #: ./profiles/default/types/qa_Folder.xml
@@ -34,20 +63,54 @@ msgstr ""
 msgid "Question"
 msgstr ""
 
-#: ./content/qa_answer.py:19
-#: ./content/qa_folder.py:18
-#: ./content/qa_question.py:18
+#: ./content/qa_folder.py:16
 msgid "Text"
 msgstr ""
 
-#: ./configure.zcml:36
+#: ./configure.zcml:37
 msgid "Uninstalls the reflab.plone.qa add-on."
 msgstr ""
 
-#: ./configure.zcml:27
+#. Default: "Authors"
+#: ./content/qa_answer.py:40
+#: ./content/qa_comment.py:38
+msgid "label_qa_answer_creators"
+msgstr ""
+
+#. Default: "Text"
+#: ./content/qa_answer.py:24
+#: ./content/qa_comment.py:25
+msgid "label_qa_answer_text"
+msgstr ""
+
+#. Default: "Authors"
+#: ./content/qa_question.py:62
+msgid "label_qa_question_creators"
+msgstr ""
+
+#. Default: "Question details"
+#: ./content/qa_question.py:32
+msgid "label_qa_question_text"
+msgstr ""
+
+#. Default: "Question"
+#: ./content/qa_question.py:27
+msgid "label_qa_question_title"
+msgstr ""
+
+#. Default: "Tags"
+#: ./content/qa_question.py:40
+msgid "label_tags"
+msgstr ""
+
+#: ./configure.zcml:28
 msgid "reflab.plone.qa"
 msgstr ""
 
-#: ./configure.zcml:36
+#: ./configure.zcml:37
 msgid "reflab.plone.qa (uninstall)"
 msgstr ""
+
+#: ./indexers.py:8
+msgid "total_question_answers"
+msgstr "Total question answers"

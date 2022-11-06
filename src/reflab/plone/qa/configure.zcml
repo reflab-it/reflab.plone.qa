@@ -55,4 +55,7 @@
       for=".content.qa_answer.IQaAnswer"
       />
 
+  <!-- Indexers -->
+  <adapter name="total_question_answers" factory=".indexers.total_question_answers" />
+
 </configure>

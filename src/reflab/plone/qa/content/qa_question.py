@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone import api
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
@@ -9,17 +10,19 @@ from reflab.plone.qa import _
 from zope import schema
 from zope.interface import implementer
 
+from .qa_answer import IQaAnswer
+
 
 class IQaQuestion(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaQuestion
     """
 
     fieldset(
-        'activity', 
+        'activity',
         label=u'Activity',
         fields=('creators', 'approved', 'last_activity_at', 'last_activity_by',
-            'followed_by', 'favorited_by', 'closed_by', 'voted_up_by',
-            'voted_down_by', 'viewed_by')
+                'followed_by', 'favorited_by', 'closed_by', 'voted_up_by',
+                'voted_down_by', 'viewed_by')
     )
 
     # User fields
@@ -29,11 +32,11 @@ class IQaQuestion(model.Schema):
     )
 
     text = RichText(
-        title=_('label_qa_question_text', default='Question details'), 
+        title=_('label_qa_question_text', default='Question details'),
         required=False,
         default_mime_type='text/plain',
         output_mime_type='text/plain',
-        allowed_mime_types=('text/plain'),         
+        allowed_mime_types=('text/plain'),
     )
 
     subjects = schema.Tuple(
@@ -45,9 +48,8 @@ class IQaQuestion(model.Schema):
     directives.widget(
         'subjects',
         AjaxSelectFieldWidget,
-        vocabulary='plone.app.vocabularies.Keywords' # TODO
+        vocabulary='plone.app.vocabularies.Keywords'  # TODO
     )
-
 
     # Reviewer fields
     directives.read_permission(creators='cmf.ReviewPortalContent')
@@ -56,7 +58,7 @@ class IQaQuestion(model.Schema):
         'creators',
         AjaxSelectFieldWidget,
         vocabulary='plone.app.vocabularies.Users'
-    )    
+    )
 
     creators = schema.Tuple(
         title=_('label_qa_question_creators', 'Authors'),
@@ -76,11 +78,11 @@ class IQaQuestion(model.Schema):
     directives.write_permission(last_activity_at='cmf.ReviewPortalContent')
     last_activity_at = schema.Datetime(
         title=_(u'Last activity at'),
-        required=False 
+        required=False
     )
 
     directives.read_permission(last_activity_by='cmf.ReviewPortalContent')
-    directives.write_permission(last_activity_by='cmf.ReviewPortalContent')    
+    directives.write_permission(last_activity_by='cmf.ReviewPortalContent')
     last_activity_by = schema.TextLine(
         title=_(u'Last activity by'),
         required=False
@@ -97,7 +99,7 @@ class IQaQuestion(model.Schema):
     )
 
     directives.read_permission(favorited_by='cmf.ReviewPortalContent')
-    directives.write_permission(favorited_by='cmf.ReviewPortalContent')    
+    directives.write_permission(favorited_by='cmf.ReviewPortalContent')
     favorited_by = schema.List(
         title=_(u'Favorited by'),
         value_type=schema.TextLine(),
@@ -144,28 +146,30 @@ class IQaQuestion(model.Schema):
     )
 
 
-from AccessControl.SecurityInfo import ClassSecurityInfo
 @implementer(IQaQuestion)
 class QaQuestion(Container):
     """ Content-type class for IQaQuestion
     """
-
-    security = ClassSecurityInfo()
 
     def view_count(self):
         return len(self.viewed_by)
 
     def favourite_count(self):
         return len(self.favorited_by)
-        
+
     def followed_count(self):
         return len(self.followed_by)
 
-    def answer_count(self):
-        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Answer"}))
-    
+    def answer_count(self, states=['published']):
+        count = 0
+        for id, item in self.contentItems():
+            if IQaAnswer.providedBy(item):
+                if api.content.get_state(item) in states:
+                    count += 1
+        return count
+
     def commment_count(self):
-        return len(self.listFolderContents(contentFilter={"portal_type" : "qa Comment"}))
+        return len(self.listFolderContents(contentFilter={"portal_type": "qa Comment"}))
 
     def voted_up_count(self):
         return len(self.voted_up_by)

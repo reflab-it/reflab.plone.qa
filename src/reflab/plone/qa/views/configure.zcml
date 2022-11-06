@@ -14,13 +14,13 @@
     permission="zope2.View"
     />
 
-  <browser:page
+  <!-- <browser:page
     name="view"
     for="..content.qa_question.IQaQuestion"
     class=".qa_question.QAQuestionView"
     template="qa_question.pt"
     permission="zope2.View"
-    />
+    /> -->
 
   <browser:page
     name="view"

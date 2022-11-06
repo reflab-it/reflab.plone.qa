@@ -1,4 +1,19 @@
 <?xml version="1.0"?>
 <object name="portal_catalog">
-  <!--<column value="my_meta_column"/>-->
+  <index name="total_question_answers" meta_type="FieldIndex">
+    <indexed_attr value="total_question_answers"/>
+  </index>
+  <index name="voted_up_count" meta_type="FieldIndex">
+    <indexed_attr value="voted_up_count"/>
+  </index>
+  <index name="voted_down_count" meta_type="FieldIndex">
+    <indexed_attr value="voted_down_count"/>
+  </index>
+  <index name="points" meta_type="FieldIndex">
+    <indexed_attr value="points"/>
+  </index>
+  <column value="total_question_answers"/>
+  <column value="voted_up_count"/>
+  <column value="voted_down_count"/>
+  <column value="points"/>  
 </object>

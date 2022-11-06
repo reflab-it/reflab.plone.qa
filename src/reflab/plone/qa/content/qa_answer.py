@@ -71,12 +71,10 @@ class IQaAnswer(model.Schema):
     )
 
 
-from AccessControl.SecurityInfo import ClassSecurityInfo
 @implementer(IQaAnswer)
 class QaAnswer(Container):
     """ Content-type class for IQaAnswer
     """
-    security = ClassSecurityInfo()
 
     def voted_up_count(self):
         return len(self.voted_up_by)
@@ -85,4 +83,4 @@ class QaAnswer(Container):
         return len(self.voted_down_by)
 
     def points(self):
-        return self.voted_up_count() - self.voted_down_count()        
+        return self.voted_up_count() - self.voted_down_count()
