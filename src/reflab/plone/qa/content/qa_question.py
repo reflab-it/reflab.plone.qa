@@ -11,6 +11,7 @@ from zope import schema
 from zope.interface import implementer
 
 from .qa_answer import IQaAnswer
+from .qa_comment import IQaComment
 
 
 class IQaQuestion(model.Schema):
@@ -168,9 +169,7 @@ class QaQuestion(Container):
                     count += 1
         return count
 
-    def commment_count(self):
-        return len(self.listFolderContents(contentFilter={"portal_type": "qa Comment"}))
-
+    # TODO share interface / behaviour with answer
     def voted_up_count(self):
         return len(self.voted_up_by)
 
@@ -179,3 +178,11 @@ class QaQuestion(Container):
 
     def points(self):
         return self.voted_up_count() - self.voted_down_count()
+
+    def commment_count(self, states=['published']):
+        count = 0
+        for id, item in self.contentItems():
+            if IQaComment.providedBy(item):
+                if api.content.get_state(item) in states:
+                    count += 1
+        return count

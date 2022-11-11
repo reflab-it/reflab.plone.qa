@@ -1,19 +1,49 @@
 <?xml version="1.0"?>
 <object name="portal_catalog">
-  <index name="total_question_answers" meta_type="FieldIndex">
-    <indexed_attr value="total_question_answers"/>
+  <!-- QUESTION SPECIFIC --> 
+  <index name="question_answers_count" meta_type="FieldIndex">
+    <indexed_attr value="answers_count"/>
   </index>
-  <index name="voted_up_count" meta_type="FieldIndex">
+  <column value="question_answers_count"/>
+
+  <index name="question_view_count" meta_type="FieldIndex">
+    <indexed_attr value="view_count"/>
+  </index>  
+  <column value="question_view_count"/>
+
+  <index name="question_favorite_count" meta_type="FieldIndex">
+    <indexed_attr value="favorite_count"/>
+  </index>    
+  <column value="question_favorite_count"/>
+  
+  <index name="question_followed_count" meta_type="FieldIndex">
+    <indexed_attr value="favorite_count"/>
+  </index>    
+  <column value="question_followed_count"/>
+  
+  <!-- QA BEHAVIOUR -->
+  <index name="qa_voted_up_count" meta_type="FieldIndex">
     <indexed_attr value="voted_up_count"/>
   </index>
-  <index name="voted_down_count" meta_type="FieldIndex">
+  <column value="qa_voted_up_count"/>
+
+  <index name="qa_voted_down_count" meta_type="FieldIndex">
     <indexed_attr value="voted_down_count"/>
   </index>
-  <index name="points" meta_type="FieldIndex">
+  <column value="qa_voted_down_count"/>
+
+  <index name="qa_points" meta_type="FieldIndex">
     <indexed_attr value="points"/>
   </index>
-  <column value="total_question_answers"/>
-  <column value="voted_up_count"/>
-  <column value="voted_down_count"/>
-  <column value="points"/>  
+  <column value="qa_points"/>
+
+  <index name="qa_comments_count" meta_type="FieldIndex">
+    <indexed_attr value="comment_count"/>
+  </index>    
+  <column value="qa_comments_count"/>
+
+
+  
+  
+  
 </object>

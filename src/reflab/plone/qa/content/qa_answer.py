@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone import api
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.app.textfield import RichText as RichTextField
 from plone.autoform import directives
@@ -8,6 +9,8 @@ from plone.supermodel.directives import fieldset
 from reflab.plone.qa import _
 from zope import schema
 from zope.interface import implementer
+
+from .qa_comment import IQaComment
 
 
 class IQaAnswer(model.Schema):
@@ -84,3 +87,11 @@ class QaAnswer(Container):
 
     def points(self):
         return self.voted_up_count() - self.voted_down_count()
+
+    def commment_count(self, states=['published']):
+        count = 0
+        for id, item in self.contentItems():
+            if IQaComment.providedBy(item):
+                if api.content.get_state(item) in states:
+                    count += 1
+        return count
