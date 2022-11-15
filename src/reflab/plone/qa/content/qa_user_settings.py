@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.dexterity.content import Container
+from plone.dexterity.content import Item
 from plone.supermodel import model
 from zope import schema
 from plone.autoform import directives
@@ -43,5 +43,5 @@ class IQAUserSettings(model.Schema):
 
 
 @implementer(IQAUserSettings)
-class QAUserSettings(Container):
+class QAUserSettings(Item):
     """ """
