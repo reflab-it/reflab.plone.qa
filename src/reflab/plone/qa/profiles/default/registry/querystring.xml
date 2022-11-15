@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<registry
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="reflab.plone.qa">
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.answer_count">
+        <value key="title" i18n:translate="">Question answers</value>
+        <value key="description" i18n:translate="">Number of answers to the question</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.view_count">
+        <value key="title" i18n:translate="">Question views</value>
+        <value key="description" i18n:translate="">Number of views of the question</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.favorite_count">
+        <value key="title" i18n:translate="">Question favorites</value>
+        <value key="description" i18n:translate="">Number of favorites on the question</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>         
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.followed_count">
+        <value key="title" i18n:translate="">Question followers</value>
+        <value key="description" i18n:translate="">Number of followers on the question</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>    
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.followed_count">
+        <value key="title" i18n:translate="">Question followers</value>
+        <value key="description" i18n:translate="">Number of followers on the question</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>    
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.voted_up_count">
+        <value key="title" i18n:translate="">Votes up</value>
+        <value key="description" i18n:translate="">Number of votes up</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>     
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.voted_down_count">
+        <value key="title" i18n:translate="">Votes down</value>
+        <value key="description" i18n:translate="">Number of votes down</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>     
+
+    <records interface="plone.app.querystring.interfaces.IQueryField"
+             prefix="plone.app.querystring.field.points">
+        <value key="title" i18n:translate="">Points</value>
+        <value key="description" i18n:translate="">Points</value>
+        <value key="enabled">True</value>
+        <value key="sortable">True</value>
+        <value key="operations">
+            <element>plone.app.querystring.operation.int.is</element>
+            <element>plone.app.querystring.operation.int.lessThan</element>
+            <element>plone.app.querystring.operation.int.largerThan</element>
+        </value>
+       <value key="group" i18n:translate="">Q&amp;A</value>
+    </records>     
+
+</registry>    
