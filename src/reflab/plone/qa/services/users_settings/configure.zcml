@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+  <adapter factory=".crud.UserPrefs" name="UserPrefs"/>
+
+  <plone:service
+    method="POST"
+    for="...content.qa_settings_folder.IQASettingsFolder"
+    factory=".crud.UserPrefsSet"
+    name="@set-my-prefs"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    for="...content.qa_settings_folder.IQASettingsFolder"
+    factory=".crud.UserPrefsInfo"
+    name="@get-my-prefs"
+    permission="zope2.View"
+    />
+
+</configure>

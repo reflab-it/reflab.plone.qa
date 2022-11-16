@@ -4,5 +4,6 @@
   <include package=".who_iam" />
   <include package=".tags" />
   <include package=".score" />
+  <include package=".users_settings" />
 
 </configure>

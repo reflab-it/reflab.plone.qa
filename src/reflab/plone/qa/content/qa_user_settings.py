@@ -27,7 +27,7 @@ class IQAUserSettings(model.Schema):
 
     directives.widget(notification_frequency_on_followed_tags=SelectFieldWidget)
     notification_frequency_on_followed_tags = schema.Choice(
-        title=u'Notification frequency on followed types',
+        title=u'Notification frequency on followed tags',
         values=[u'Weekly', u'Daily', u'Never'],
         default='Weekly',
         required=True,
