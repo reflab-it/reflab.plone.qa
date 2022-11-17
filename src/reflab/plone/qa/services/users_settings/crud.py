@@ -8,6 +8,8 @@ from zope.interface import implementer
 from zope.interface import alsoProvides
 import plone.protect.interfaces
 
+from reflab.plone.qa.content.qa_user_settings import frequency_on_followed_tags_values, frequency_on_followed_questions_values
+
 @implementer(IExpandableElement)
 @adapter(Interface, Interface)
 class UserPrefs(object):
@@ -105,4 +107,15 @@ class UserPrefsInfo(Service):
         return {
             'status': 'error',
             'message': 'invalid user'
+        }
+
+class UserPrefsSchema(Service):
+
+    def reply(self):
+        return {
+            'status': 'ok',
+            'data': {
+                'frequency_on_followed_tags_values': frequency_on_followed_tags_values,
+                'frequency_on_followed_questions_values': frequency_on_followed_questions_values
+            }
         }
