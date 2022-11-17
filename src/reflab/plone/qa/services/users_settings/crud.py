@@ -97,9 +97,9 @@ class UserPrefsInfo(Service):
                         'status': 'ok',
                         'message': 'settings do notexist for %s' % userid,
                         'data': {
-                            followed_tags: [],
-                            frequency_on_followed_tags: 'Never',
-                            frequency_on_followed_questions: 'Never'
+                            'followed_tags': [],
+                            'frequency_on_followed_tags': 'Never',
+                            'frequency_on_followed_questions': 'Never'
                         }
                     }
         return {
