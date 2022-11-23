@@ -54,6 +54,7 @@ setup(
         'plone.restapi < 8.0.0',
         'plone.app.dexterity',
         'collective.z3cform.datagridfield',
+        'markdown'
     ],
     extras_require={
         'test': [

@@ -41,10 +41,10 @@
       name="reflab.plone.qa-hiddenprofiles"
       />
 
-  <!-- -*- extra stuff goes here -*- -->
 
   <include package=".views" />
 
+  <!-- RichText transformers -->  
   <adapter
       factory=".transform.QATextTransformer"
       for=".content.qa_question.IQaQuestion"
@@ -54,5 +54,18 @@
       factory=".transform.QATextTransformer"
       for=".content.qa_answer.IQaAnswer"
       />
+
+  <!-- Vocabularies -->
+  <utility
+    component=".vocabularies.QuestionAnswersVocabularyFactory"
+    name="reflab.plone.qa.vocabularies.question_answers"
+    />      
+
+  <!-- Indexers -->    
+  <adapter name="Description" factory=".indexers.question_description" />
+  <adapter name="Title" factory=".indexers.answer_title" />  
+  <adapter name="Title" factory=".indexers.comment_title" />  
+
+
 
 </configure>

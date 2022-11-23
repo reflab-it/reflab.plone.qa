@@ -2,16 +2,22 @@
 from plone import api
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from plone.app.z3cform.widget import SelectFieldWidget
 from plone.autoform import directives
 from plone.dexterity.content import Container
 from plone.supermodel import model
 from plone.supermodel.directives import fieldset
 from reflab.plone.qa import _
+from z3c.relationfield.schema import RelationChoice
 from zope import schema
 from zope.interface import implementer
 
 from .qa_answer import IQaAnswer
 from .qa_comment import IQaComment
+
+
+def make_relation_root_path(context):
+    return u'/'.join(context.getPhysicalPath())
 
 
 class IQaQuestion(model.Schema):
@@ -21,7 +27,7 @@ class IQaQuestion(model.Schema):
     fieldset(
         'activity',
         label=u'Activity',
-        fields=('creators', 'approved', 'last_activity_at', 'last_activity_by',
+        fields=('creators', 'approved_answer', 'last_activity_at', 'last_activity_by',
                 'followed_by', 'favorited_by', 'closed_by', 'voted_up_by',
                 'voted_down_by', 'viewed_by')
     )
@@ -53,6 +59,14 @@ class IQaQuestion(model.Schema):
     )
 
     # Reviewer fields
+    approved_answer = RelationChoice(
+        title=u"Approved Answer",
+        vocabulary='reflab.plone.qa.vocabularies.question_answers',
+        required=False,
+    )
+
+    directives.widget(approved_answer=SelectFieldWidget)
+
     directives.read_permission(creators='cmf.ReviewPortalContent')
     directives.write_permission(creators='cmf.ReviewPortalContent')
     directives.widget(
@@ -68,12 +82,7 @@ class IQaQuestion(model.Schema):
         missing_value=(),
     )
 
-    directives.read_permission(approved='cmf.ReviewPortalContent')
-    directives.write_permission(approved='cmf.ReviewPortalContent')
-    approved = schema.Bool(
-        title=_(u'Approved'),
-        required=False
-    )
+
 
     directives.read_permission(last_activity_at='cmf.ReviewPortalContent')
     directives.write_permission(last_activity_at='cmf.ReviewPortalContent')

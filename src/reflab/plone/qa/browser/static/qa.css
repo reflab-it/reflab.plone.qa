@@ -19,3 +19,16 @@ body .contenttype-qa-question::before {
 body .contenttype-qa-answer::before {
     content: 'A!';
 }
+
+body .contenttype-qa-comment::before {
+    content: 'C.';
+}
+
+body .contenttype-qa-settings-folder::before {
+    content: 'SF';
+}
+
+body .contenttype-qa-user-settings::before {
+    content: 'US';
+}
+

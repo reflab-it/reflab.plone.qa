@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone import api
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from z3c.form.browser.textarea import TextAreaWidget
 from plone.app.textfield import RichText as RichTextField
 from plone.autoform import directives
 from plone.dexterity.content import Container
@@ -17,19 +18,20 @@ class IQaAnswer(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaAnswer
     """
     fieldset(
-        'activity', 
+        'activity',
         label=u'Activity',
-        fields=('creators', 'approved',  'voted_up_by', 'voted_down_by')
+        fields=('creators', 'voted_up_by', 'voted_down_by')
     )
 
     # User fields
     text = RichTextField(
-        title=_('label_qa_answer_text', default='Text'), 
-        required=True, 
+        title=_('label_qa_answer_text', default='Text'),
+        required=True,
         default_mime_type='text/plain',
         output_mime_type='text/plain',
-        allowed_mime_types=('text/plain'),          
+        allowed_mime_types=['text/plain'],
     )
+    directives.widget('text', TextAreaWidget)
 
     # Reviewer fields
     directives.read_permission(creators='cmf.ReviewPortalContent')
@@ -45,13 +47,6 @@ class IQaAnswer(model.Schema):
         required=False,
         missing_value=(),
     )       
-
-    directives.read_permission(approved='cmf.ReviewPortalContent')
-    directives.write_permission(approved='cmf.ReviewPortalContent')
-    approved = schema.Bool(
-        title=_(u'Approved'),
-        required=False
-    )    
 
     directives.read_permission(voted_up_by='cmf.ReviewPortalContent')
     directives.write_permission(voted_up_by='cmf.ReviewPortalContent')
