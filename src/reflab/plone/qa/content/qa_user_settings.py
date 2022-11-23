@@ -7,7 +7,8 @@ from zope.interface import implementer
 from plone.app.z3cform.widget import SelectFieldWidget
 
 from .. import _
-
+frequency_on_followed_tags_values = [u'Weekly', u'Daily', u'Never']
+frequency_on_followed_questions_values = [u'Hourly', u'Never']
 
 class IQAUserSettings(model.Schema):
     """ """
@@ -27,8 +28,8 @@ class IQAUserSettings(model.Schema):
 
     directives.widget(notification_frequency_on_followed_tags=SelectFieldWidget)
     notification_frequency_on_followed_tags = schema.Choice(
-        title=u'Notification frequency on followed types',
-        values=[u'Weekly', u'Daily', u'Never'],
+        title=u'Notification frequency on followed tags',
+        values=frequency_on_followed_tags_values,
         default='Weekly',
         required=True,
     )
@@ -36,7 +37,7 @@ class IQAUserSettings(model.Schema):
     directives.widget(notification_frequency_on_followed_questions=SelectFieldWidget)
     notification_frequency_on_followed_questions = schema.Choice(
         title=u'Notification frequency on followed questions',
-        values=[u'Hourly', u'Never'],
+        values=frequency_on_followed_questions_values,
         default='Hourly',
         required=True,
     )
