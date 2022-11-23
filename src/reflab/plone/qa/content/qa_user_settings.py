@@ -10,11 +10,17 @@ from .. import _
 frequency_on_followed_tags_values = [u'Weekly', u'Daily', u'Never']
 frequency_on_followed_questions_values = [u'Hourly', u'Never']
 
+
 class IQAUserSettings(model.Schema):
     """ """
 
     title = schema.TextLine(
         title=_('label_qa_username', default='Username'),
+        required=True
+    )
+
+    display_name = schema.TextLine(
+        title=_('label_qa_user_displayname', default='Display name'),
         required=True
     )
 

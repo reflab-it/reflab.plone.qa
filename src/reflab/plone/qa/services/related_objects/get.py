@@ -6,35 +6,77 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 
+from ...helpers import get_user_settings
+
+
+def get_user_fields(username):
+    fallback = username.split('@')[0]
+    result = {
+        'fullname': fallback,
+        'id': ''
+    }
+    us = get_user_settings(username)
+    if us:
+        display_name = getattr(us, 'display_name', None) or fallback
+        result['fullname'] = display_name
+        result['id'] = us.UID()
+    else:
+        plone_user = api.user.get(username=username)
+        if plone_user:
+            fullname = plone_user.getProperty('fullname', None) or fallback
+            if fullname:
+                result['fullname'] = fullname
+    return result
+
+
 # utility method
 def get_question_fields(item):
-    return {
-        'id': item.id,
-        'title': item.title,
-        'description': item.description,
-        'author': item.creators and item.creators[0] or None,
-        'closed': api.content.get_state(item) == 'closed',
-        'text': item.text and item.text.output_relative_to(item) or '',
-        'approved': item.approved,
-        'deleted': api.content.get_state(item) == 'deleted',
+
+    # A brute way to manage both brain and real objects...
+    if hasattr(item, 'getObject'):
+        obj = item.getObject()
+    else:
+        obj = item
+        item = None
+
+    author = obj.creators and obj.creators[0] or 'REMOVED USER'
+    approved_answer = obj.approved_answer.to_object if obj.approved_answer else None
+
+    result = {
+        'id': obj.id,
+        'title': obj.title,
+        'description': item and item.Description or '',  # The description is from the brain only
+        'author': get_user_fields(author),
+        'closed': api.content.get_state(obj) == 'closed',
+        'text': obj.text and obj.text.output_relative_to(obj) or '',
+        'approved': approved_answer and True or False,
+        'approved_answer_user': {},
+        'deleted': api.content.get_state(obj) == 'deleted',
         '_meta':
         {
-            'type': item.Type(),
-            'portal_type': item.portal_type
+            'type': obj.Type(),
+            'portal_type': obj.portal_type
         },
-        'link': item.absolute_url(),
-        'rel': item.absolute_url(1),
-        'subs': item.answer_count(),
-        'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
-        'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
-        'view_count': item.view_count(),
-        'comment_count': item.commment_count(),
-        'vote_up_count': item.voted_up_count(),
-        'vote_down_count': item.voted_down_count(),
-        'vote_count': item.points(),
-        'tags': item.subjects or None,
-        'followed_by': item.followed_by
+        'link': obj.absolute_url(),
+        'rel': obj.absolute_url(1),
+        'subs': obj.answer_count(),
+        'last_activity_at': obj.last_activity_at and obj.last_activity_at.isoformat() or '1976-04-29',
+        'added_at': obj.created() and obj.created().asdatetime().isoformat() or '1976-04-29',
+        'view_count': obj.view_count(),
+        'comment_count': obj.commment_count(),
+        'vote_up_count': obj.voted_up_count(),
+        'vote_down_count': obj.voted_down_count(),
+        'vote_count': obj.points(),
+        'tags': obj.subjects or None,
+        'followed_by': obj.followed_by
     }
+
+    if result['approved']:
+        approved_answer_username = approved_answer.creators and approved_answer.creators[0] or 'REMOVED USER'
+        result['approved_answer_user'] = get_user_fields(approved_answer_username)
+
+    return result
+
 
 def get_answer_fields(item):
     comments = [get_comment_fields(c) for c in item.listFolderContents(contentFilter={"portal_type" : "qa Comment"})]
@@ -44,7 +86,7 @@ def get_answer_fields(item):
         # 'description': item.description,
         'author': item.creators and item.creators[0] or None,
         'text': item.text and item.text.output_relative_to(item) or '',
-        'approved': item.approved,
+        'approved': item.UID() == item.aq_parent.approved_answer,
         'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
         {
@@ -208,7 +250,7 @@ class RelatedObjectsGetQuestions(Service):
                 'parent': None,
             }
         }
-        for item in self.context.listFolderContents(contentFilter={"portal_type" : "qa Question"}):
+        for item in self.context.getFolderContents(contentFilter={"portal_type" : "qa Question"}):
             result['related-objects']['items'].append(get_question_fields(item))
         return result    
 
