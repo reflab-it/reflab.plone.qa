@@ -28,5 +28,5 @@ def markdown_to_text(markdown_string):
 
 
 def get_user_settings(username):
-    contents = api.content.find(portal_type='qa User Settings', title=username)
+    contents = api.content.find(portal_type='qa User Settings', Title=username)
     return contents[0].getObject() if len(contents) > 0 else None

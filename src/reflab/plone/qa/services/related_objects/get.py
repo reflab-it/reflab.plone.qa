@@ -80,11 +80,12 @@ def get_question_fields(item):
 
 def get_answer_fields(item):
     comments = [get_comment_fields(c) for c in item.listFolderContents(contentFilter={"portal_type" : "qa Comment"})]
+    author = item.creators and item.creators[0] or 'REMOVED USER'
     return {
         'id': item.id,
         # 'title': item.title,
         # 'description': item.description,
-        'author': item.creators and item.creators[0] or None,
+        'author': get_user_fields(author),
         'text': item.text and item.text.output_relative_to(item) or '',
         'approved': item.UID() == item.aq_parent.approved_answer,
         'deleted': api.content.get_state(item) == 'deleted',
@@ -106,12 +107,14 @@ def get_answer_fields(item):
         'hasComments': len(comments) > 0,
     }
 
+
 def get_comment_fields(item):
+    author = item.creators and item.creators[0] or 'REMOVED USER'
     return {
         'id': item.id,
         # 'title': item.title,
         # 'description': item.description,
-        'author': item.creators and item.creators[0] or None,
+        'author': get_user_fields(author),
         'text': item.text,
         'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
@@ -125,6 +128,7 @@ def get_comment_fields(item):
         'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
         # 'view_count': int(len(item.viewed_by)),
     }
+
 
 class RelatedObjectsGet(Service):
 
