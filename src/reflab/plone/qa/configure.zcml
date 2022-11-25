@@ -59,7 +59,12 @@
   <utility
     component=".vocabularies.QuestionAnswersVocabularyFactory"
     name="reflab.plone.qa.vocabularies.question_answers"
-    />      
+    /> 
+
+  <utility
+    component=".vocabularies.QuestionSubjectsVocabularyFactory"
+    name="reflab.plone.qa.vocabularies.question_subjects"
+    />         
 
   <!-- Indexers -->    
   <adapter name="Description" factory=".indexers.question_description" />

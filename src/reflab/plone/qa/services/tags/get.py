@@ -27,10 +27,22 @@ class Tags(object):
         # old compatible api
         all_tags = [i['name'] for i in self.context.datagrid_tags]
         # all information
-        raw = [{'id': i['uid'], 
+        raw = []
+        for i in self.context.datagrid_tags:
+            questions = api.content.find(portal_type="qa Question", Subject=i['uid'])
+            approved_answers = []
+            for question in questions:
+                obj = question.getObject()
+                if obj.approved_answer and obj.approved_answer.to_object:
+                    approved_answers.append(question)
+            raw.append({
+                'id': i['name'],
                 'name': i['name'],
                 'popular': i['popular'],
-                'description': i['description'] } for i in self.context.datagrid_tags]
+                'description': i['description'],
+                'questions': len(questions),
+                'approved_answers': len(approved_answers)
+            })
         popular = [i['name'] for i in raw if i['popular']]
         result = {
             'tag-list': all_tags,

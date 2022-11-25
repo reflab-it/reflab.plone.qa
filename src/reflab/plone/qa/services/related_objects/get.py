@@ -7,6 +7,7 @@ from zope.interface import Interface
 from zope.interface import implementer
 
 from ...helpers import get_user_settings
+from ...vocabularies import QuestionSubjectsVocabularyFactory
 
 
 def get_user_fields(username):
@@ -42,6 +43,12 @@ def get_question_fields(item):
     author = obj.creators and obj.creators[0] or 'REMOVED USER'
     approved_answer = obj.approved_answer.to_object if obj.approved_answer else None
 
+    subjects_vocabulary = QuestionSubjectsVocabularyFactory(obj)
+    tags = []
+    for tag in obj.subjects:
+        if tag in subjects_vocabulary:
+            tags.append(subjects_vocabulary.getTerm(tag).title)
+
     result = {
         'id': obj.id,
         'title': obj.title,
@@ -67,7 +74,7 @@ def get_question_fields(item):
         'vote_up_count': obj.voted_up_count(),
         'vote_down_count': obj.voted_down_count(),
         'vote_count': obj.points(),
-        'tags': obj.subjects or None,
+        'tags': tags,
         'followed_by': obj.followed_by
     }
 

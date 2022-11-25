@@ -55,7 +55,7 @@ class IQaQuestion(model.Schema):
     directives.widget(
         'subjects',
         AjaxSelectFieldWidget,
-        vocabulary='plone.app.vocabularies.Keywords'  # TODO
+        vocabulary='reflab.plone.qa.vocabularies.question_subjects'  # TODO
     )
 
     # Reviewer fields
@@ -195,3 +195,11 @@ class QaQuestion(Container):
                 if api.content.get_state(item) in states:
                     count += 1
         return count
+
+    def _get_subjects(self):
+        return self.subject
+
+    def _set_subjects(self, value):
+        self.subject = value
+        
+    subjects = property(_get_subjects, _set_subjects)

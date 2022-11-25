@@ -4,9 +4,11 @@ from zope.interface import implementer
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
+from z3c.form.interfaces import IDisplayForm
 
 from . import _
 from .content.qa_question import IQaQuestion
+from .content.qa_folder import IQaFolder
 
 # This for having a translation in the collections
 _FIELD_LABEL['answer_count'] = _('Question answers')
@@ -44,4 +46,31 @@ class QuestionAnswersVocabulary(object):
         return SimpleVocabulary(terms)
 
 
+@implementer(IVocabularyFactory)
+class QuestionSubjectsVocabulary(object):
+    def __call__(self, context=None):
+        terms = []
+        qa_folder = None
+
+        if IDisplayForm.providedBy(context):
+            context = context.getContent()
+
+        if IQaQuestion.providedBy(context):
+            qa_folder = context.aq_parent
+
+        if IQaFolder.providedBy(context):
+            qa_folder = context
+
+        if qa_folder:
+            for tag in qa_folder.datagrid_tags:
+                terms.append(SimpleTerm(
+                    value=tag['name'],
+                    token=tag['name'],
+                    title=tag['name']
+                ))
+
+        return SimpleVocabulary(terms)
+
+
 QuestionAnswersVocabularyFactory = QuestionAnswersVocabulary()
+QuestionSubjectsVocabularyFactory = QuestionSubjectsVocabulary()
