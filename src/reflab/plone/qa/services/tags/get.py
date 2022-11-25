@@ -29,7 +29,7 @@ class Tags(object):
         # all information
         raw = []
         for i in self.context.datagrid_tags:
-            questions = api.content.find(portal_type="qa Question", Subject=i['uid'])
+            questions = api.content.find(portal_type="qa Question", Subject=i['name'])
             approved_answers = []
             for question in questions:
                 obj = question.getObject()
