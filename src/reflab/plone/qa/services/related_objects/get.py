@@ -7,6 +7,7 @@ from zope.interface import Interface
 from zope.interface import implementer
 
 from ...helpers import get_user_settings
+from ...helpers import munge_search_term
 from ...vocabularies import QuestionSubjectsVocabularyFactory
 
 
@@ -47,7 +48,11 @@ def get_question_fields(item):
     tags = []
     for tag in obj.subjects:
         if tag in subjects_vocabulary:
-            tags.append(subjects_vocabulary.getTerm(tag).title)
+            term = subjects_vocabulary.getTerm(tag)
+            tags.append({
+                'id': term.value,
+                'name': term.title
+            })
 
     result = {
         'id': obj.id,
@@ -67,7 +72,7 @@ def get_question_fields(item):
         'link': obj.absolute_url(),
         'rel': obj.absolute_url(1),
         'subs': obj.answer_count(),
-        'last_activity_at': obj.last_activity_at and obj.last_activity_at.isoformat() or '1976-04-29',
+        # 'last_activity_at': obj.last_activity_at and obj.last_activity_at.isoformat() or '1976-04-29',
         'added_at': obj.created() and obj.created().asdatetime().isoformat() or '1976-04-29',
         'view_count': obj.view_count(),
         'comment_count': obj.commment_count(),
@@ -251,6 +256,7 @@ class RelatedObjectsGetVoted(Service):
                 'msg': str(e)
             }
 
+
 class RelatedObjectsGetQuestions(Service):
 
     @property
@@ -261,114 +267,85 @@ class RelatedObjectsGetQuestions(Service):
                 'parent': None,
             }
         }
-        for item in self.context.getFolderContents(contentFilter={"portal_type" : "qa Question"}):
+        for item in self.context.getFolderContents(contentFilter={"portal_type": "qa Question"}):
             result['related-objects']['items'].append(get_question_fields(item))
-        return result    
+        return result
 
     def reply(self):
-        related_objects = self._related_objects
-        tmp = related_objects['related-objects']['items']
-        # need to filter only questions
-        only_question_objects = [ i for i in tmp if i['_meta']['type'] == 'Question' ]
+        # CATALOG QUERY
+        catalog = api.portal.get_tool('portal_catalog')
 
-        # before all need to sort
-        print('before all')
-        print('=========================')
-        if self.request.has_key('sort_order') and self.request.has_key('sort_by'):
-            sort_by = self.request.get('sort_by')
-            sort_order = self.request.get('sort_order')
-            print('sort by ' + sort_by)
-            print('order ' + sort_order)
-            #import pdb; pdb.set_trace()
-            if sort_by == 'by_date':
-                only_question_objects = sorted( only_question_objects,
-                    key = lambda d: d['added_at'],
-                    reverse = bool(sort_order == 'desc')
-                )
-            elif sort_by == 'by_activity':
-                only_question_objects = sorted( only_question_objects,
-                    key = lambda d: d['last_activity_at'],
-                    reverse = bool(sort_order == 'desc')
-                )
-            elif sort_by == 'by_answers':
-                only_question_objects = sorted( only_question_objects,
-                    key = lambda d: d['subs'],
-                    reverse = bool(sort_order == 'desc')
-                )
-            elif sort_by == 'by_votes':
-                only_question_objects = sorted( only_question_objects,
-                    key = lambda d: d['vote_count'],
-                    reverse = bool(sort_order == 'desc')
-                )
+        query = dict(
+            portal_type='qa Question',
+            path='/'.join(self.context.getPhysicalPath()),
+            sort_on='created',
+            sort_order='descending'
+        )
+
+        sort_order = self.request.get('sort_order', None)
+        sort_by = self.request.get('sort_by', None)
+        text = self.request.get('text', None)
+        tags = self.request.get('tags', None)
+        filter_by = self.request.get('order_by', None)  # TODO, rename parameter
+
+        if sort_order:
+            query['sort_order'] = 'descending' if sort_order == 'desc' else 'ascending'
+
+        sort_by_indexes_map = {
+            'by_date': 'created',
+            'by_activity': 'last_activity_at',
+            'by_answers': 'answer_count',
+            'by_votes': 'points',
+        }
+        if sort_by:
+            query['sort_on'] = sort_by_indexes_map.get(sort_by)
+
+        if text:
+            query['SearchableText'] = munge_search_term(text)
+
+        if tags:
+            if type(tags) == str:
+                tags = [tags]
+            query['Subject'] = tags
+
+        if filter_by and filter_by != 'ALL':
+            if filter_by == 'UNANSWERED':
+                query['answer_count'] = 0
+            if filter_by == 'FOLLOWED':
+                query['followed_by'] = api.user.get_current().getUserName()
+            if filter_by == 'CLOSED':
+                query['has_approved_answer'] = True
+
+        items = catalog(**query)
+
+        # BATCHING
+        start_at = self.request.get('start_at', None)
+        end_at = self.request.get('end_at', None)
+
+        if start_at:
+            start_at = int(start_at)
         else:
-            # default sort 
-            only_question_objects = sorted( only_question_objects,
-                key = lambda d: d['added_at'],
-                reverse = True
-            )
-        # there is text?
-        if self.request.has_key('text'):
-            text = self.request.get('text')
-            _tmp_text = text.split(' ')
-            _tmp_text = [i.lower() for i in _tmp_text]
-            _tmp_text = set(_tmp_text)
-            only_question_objects = [ i for i in only_question_objects if set([x.lower() for x in i['title'].split(' ')]).intersection(_tmp_text)]
-            #only_question_objects = [ i for i in only_question_objects if text.lower() in i['title'].lower() ]
-        # there is a tag setted?
-        if self.request.has_key('tags'):
-            tags = self.request.get('tags')
-            tagged = [ i for i in only_question_objects if i['tags'] is not None]
-            only_question_objects = [ i for i in tagged if tags in i['tags'] ]
+            start_at = 0
 
-        _start = 0
-        _end = len(tmp)
-        try:
-            if self.request.has_key('start_at'):
-                _start = int(self.request.get('start_at'))
-            if self.request.has_key('end_at'):
-                _end = int(self.request.get('end_at'))
-        except:
-            pass
-
-        if self.request.has_key('order_by'):
-            custom_order = self.request.get('order_by')
-            if custom_order in ['#', 'ALL', 'UNANSWERED', 'FOLLOWED', 'CLOSED']:
-                # xxx ordering
-                print('ordering by: ' + custom_order)
-                if custom_order in ['#', 'ALL']:
-                    pass
-                else:
-                    if custom_order == 'UNANSWERED':
-                        print('order by => UNANSWERED')
-                        _filtered = [q for q in only_question_objects if q['subs'] == 0]
-                        #import pdb; pdb.set_trace()
-                        only_question_objects = _filtered
-                    elif custom_order == 'FOLLOWED':
-                        print('order by => FOLLOWED')
-                        pass
-                    elif custom_order == 'CLOSED':
-                        _filtered = [q for q in only_question_objects if q['closed'] == True]
-                        only_question_objects = _filtered
-            else:
-                return {
-                    'status': 'error',
-                    'message': 'wrong ordering'
-                }
-        if _end > _start:
-            try:
-                _tmp = only_question_objects[_start:_end+1]
-            except:
-                print('however, something went quite wrong')
-                _tmp = only_question_objects    
+        if end_at:
+            end_at = int(end_at)
         else:
-            _tmp = only_question_objects
-        
+            end_at = len(items)
+
+        # QUESTION FIELDS
+        results = []
+        for item in items[start_at:end_at + 1]:
+            results.append(get_question_fields(item))
+
         return {
             'status': 'ok',
-            'questions': _tmp,
-            'total_questions': len(only_question_objects),
-            'number_of_current_result': len(_tmp),
+            'questions': results,
+            'total_questions': len(items),
+            'number_of_current_result': len(results),
         }
+
+
+
 
 class QuestionStats(Service):
     def reply(self):

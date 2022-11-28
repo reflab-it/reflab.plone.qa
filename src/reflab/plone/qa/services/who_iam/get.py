@@ -64,13 +64,13 @@ class WhoIamGet(Service):
         tmp = WhoIam(self.context, self.request)
         return tmp(expand=True)['who-iam']
 
+
 class WhoIsGet(Service):
 
     def reply(self):
-        #import pdb; pdb.set_trace()
         user = None
         answ_list = []
-        if self.request.has_key('user') and self.request.has_key('folder'):
+        if 'user' in self.request.keys() and 'folder' in self.request.keys():
             user = self.request.get('user')
             plone_user_data = api.user.get(user)
             full_name = plone_user_data.getProperty('fullname')

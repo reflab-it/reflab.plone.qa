@@ -1,3 +1,4 @@
+from plone import api
 from plone.indexer import indexer
 
 from .content.qa_answer import IQaAnswer

@@ -15,7 +15,9 @@ _FIELD_LABEL['answer_count'] = _('Question answers')
 _FIELD_LABEL['view_count'] = _('Question views')
 _FIELD_LABEL['favorite_count'] = _('Question favorites')
 _FIELD_LABEL['followed_count'] = _('Question followers')
-
+_FIELD_LABEL['last_activity_at'] = _('Question last activity date')
+_FIELD_LABEL['has_approved_answer'] = _('Question has approved answer')
+_FIELD_LABEL['followed_by'] = _('Question followed by')
 _FIELD_LABEL['voted_up_count'] = _('Votes up')
 _FIELD_LABEL['voted_down_count'] = _('Votes down')
 _FIELD_LABEL['points'] = _('Points')
@@ -64,8 +66,8 @@ class QuestionSubjectsVocabulary(object):
         if qa_folder:
             for tag in qa_folder.datagrid_tags:
                 terms.append(SimpleTerm(
-                    value=tag['name'],
-                    token=tag['name'],
+                    value=tag['uid'],
+                    token=tag['uid'],
                     title=tag['name']
                 ))
 

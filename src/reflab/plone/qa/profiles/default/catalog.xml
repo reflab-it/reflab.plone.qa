@@ -21,6 +21,20 @@
   </index>
   <column value="followed_count"/>
   
+  <index name="last_activity_at" meta_type="DateIndex">
+    <indexed_attr value="last_activity_at"/>
+  </index>
+  <column value="last_activity_at"/>
+
+  <index name="has_approved_answer" meta_type="BooleanIndex">
+    <indexed_attr value="has_approved_answer"/>
+  </index>
+  <column value="has_approved_answer"/>
+
+  <index name="followed_by" meta_type="KeywordIndex">
+    <indexed_attr value="followed_by"/>
+  </index>
+
   <!-- QA BEHAVIOUR -->
   <index name="voted_up_count" meta_type="FieldIndex">
     <indexed_attr value="voted_up_count"/>

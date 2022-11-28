@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from DateTime import DateTime
 from plone import api
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
@@ -8,6 +9,7 @@ from plone.dexterity.content import Container
 from plone.supermodel import model
 from plone.supermodel.directives import fieldset
 from reflab.plone.qa import _
+from z3c.form.browser.textarea import TextAreaWidget
 from z3c.relationfield.schema import RelationChoice
 from zope import schema
 from zope.interface import implementer
@@ -27,7 +29,7 @@ class IQaQuestion(model.Schema):
     fieldset(
         'activity',
         label=u'Activity',
-        fields=('creators', 'approved_answer', 'last_activity_at', 'last_activity_by',
+        fields=('creators', 'approved_answer',
                 'followed_by', 'favorited_by', 'closed_by', 'voted_up_by',
                 'voted_down_by', 'viewed_by')
     )
@@ -45,6 +47,7 @@ class IQaQuestion(model.Schema):
         output_mime_type='text/plain',
         allowed_mime_types=('text/plain'),
     )
+    directives.widget('text', TextAreaWidget)
 
     subjects = schema.Tuple(
         title=_(u'label_tags', default=u'Tags'),
@@ -80,22 +83,6 @@ class IQaQuestion(model.Schema):
         value_type=schema.TextLine(),
         required=False,
         missing_value=(),
-    )
-
-
-
-    directives.read_permission(last_activity_at='cmf.ReviewPortalContent')
-    directives.write_permission(last_activity_at='cmf.ReviewPortalContent')
-    last_activity_at = schema.Datetime(
-        title=_(u'Last activity at'),
-        required=False
-    )
-
-    directives.read_permission(last_activity_by='cmf.ReviewPortalContent')
-    directives.write_permission(last_activity_by='cmf.ReviewPortalContent')
-    last_activity_by = schema.TextLine(
-        title=_(u'Last activity by'),
-        required=False
     )
 
     directives.read_permission(followed_by='cmf.ReviewPortalContent')
@@ -195,6 +182,30 @@ class QaQuestion(Container):
                 if api.content.get_state(item) in states:
                     count += 1
         return count
+
+    @property
+    def last_activity_at(self):
+        result = self.created()
+        _dates = []
+        for id, item in self.contentItems():
+            if IQaComment.providedBy(item):
+                _dates.append(item.created())
+            if IQaAnswer.providedBy(item):
+                _dates.append(item.created())
+                for id2, item2 in item.contentItems():
+                    if IQaComment.providedBy(item2):
+                        _dates.append(item2.created())
+
+        if _dates:
+            _dates.sort()
+            result = _dates[-1]
+
+        return result
+
+    @property
+    def has_approved_answer(self):
+        return True if (self.approved_answer and self.approved_answer.to_object) else False
+
 
     def _get_subjects(self):
         return self.subject

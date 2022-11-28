@@ -12,21 +12,4 @@
     permission="zope2.View"
     />
 
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.TagsInfo"
-    name="@tags-info"
-    permission="zope2.View"
-    />
-
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.BestTags"
-    name="@tags-best"
-    permission="zope2.View"
-    />
-
-
 </configure>
