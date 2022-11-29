@@ -3,65 +3,6 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:plone="http://namespaces.plone.org/plone">
 
-  <!-- <adapter factory=".get.RelatedObjects" name="related-objects"/>
-  <adapter factory=".get.RelatedObjects" name="get-questions"/>
-  <adapter factory=".get.RelatedObjects" name="get-similars"/>
-  <adapter factory=".get.RelatedObjects" name="get-followers"/>
-  <adapter factory=".get.RelatedObjects" name="get-followed-questions"/>
-  <adapter factory=".get.RelatedObjects" name="get-voted-questions"/>
-  <adapter factory=".get.RelatedObjects" name="get-question-stat"/>
-  <adapter factory=".post.InsertPost" name="follow"/>
-  <adapter factory=".post.InsertPost" name="insert_post"/> -->
-
-
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.RelatedObjectsGet"
-    name="@related-objects"
-    permission="zope2.View"
-    />
-
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.RelatedObjectsGetQuestions"
-    name="@get-questions"
-    permission="zope2.View"
-    />
-
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.RelatedObjectsGetSimilars"
-    name="@get-similars"
-    permission="zope2.View"
-    />
-  
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.RelatedObjectsGetFollowers"
-    name="@get-followers"
-    permission="zope2.View"
-    />
-
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.RelatedObjectsGetFollowed"
-    name="@get-followed-questions"
-    permission="zope2.View"
-    />
-  
-  <plone:service
-    method="GET"
-    for="zope.interface.Interface"
-    factory=".get.RelatedObjectsGetVoted"
-    name="@get-voted-questions"
-    permission="zope2.View"
-    />
-
   <plone:service
     method="GET"
     for="zope.interface.Interface"

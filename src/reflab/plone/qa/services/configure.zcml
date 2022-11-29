@@ -1,8 +1,10 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
+  <include package=".qa_folder" />
+  <include package=".question" />
+
   <include package=".related_objects" />
   <include package=".who_iam" />
-  <include package=".tags" />
   <include package=".score" />
   <include package=".users_settings" />
 

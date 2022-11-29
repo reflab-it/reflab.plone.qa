@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from email.policy import default
 from plone.app.textfield import RichText
 from plone.autoform import directives
 from plone.dexterity.content import Container

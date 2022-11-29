@@ -1,0 +1,63 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    >
+
+  <adapter
+      factory=".get_questions.Questions"
+      name="questions"
+      />
+
+  <adapter
+      factory=".get_tags.Tags"
+      name="tags"
+      />      
+
+  <adapter
+      factory=".get_my_followed.MyFollowed"
+      name="my-followed"
+      />
+
+  <adapter
+      factory=".get_my_voted.MyVoted"
+      name="my-voted"
+      />
+
+
+  <!-- TODO: rename this in '@questions' -->
+  <plone:service
+      method="GET"
+      factory=".get_questions.QuestionsGet"
+      for="...content.qa_folder.IQaFolder"
+      permission="zope2.View"
+      name="@get-questions"
+      />
+
+  <!-- TODO: rename this in '@tags' -->
+  <plone:service
+      method="GET"
+      factory=".get_tags.TagsGet"
+      for="...content.qa_folder.IQaFolder"
+      permission="zope2.View"
+      name="@tags-list"
+      />      
+
+  <!-- TODO: rename this in '@my-followed' -->  
+  <plone:service
+    method="GET"
+    factory=".get_my_followed.MyFollowedGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@get-followed-questions"
+    permission="zope2.View"
+    />
+  
+  <!-- TODO: rename this in '@my-voted' -->  
+  <plone:service
+    method="GET"
+    factory=".get_my_voted.MyVotedGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@get-voted-questions"
+    permission="zope2.View"
+    />      
+
+</configure>

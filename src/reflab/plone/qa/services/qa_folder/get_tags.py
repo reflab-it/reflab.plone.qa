@@ -6,9 +6,11 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 
+from ...content.qa_folder import IQaFolder
+
 
 @implementer(IExpandableElement)
-@adapter(Interface, Interface)
+@adapter(IQaFolder, Interface)
 class Tags(object):
 
     def __init__(self, context, request):
@@ -17,7 +19,7 @@ class Tags(object):
 
     def __call__(self, expand=False):
         result = {
-            'tags-list': {
+            'tags': {
                 '@id': '{}/@tags-list'.format(
                     self.context.absolute_url(),
                 ),
@@ -31,10 +33,12 @@ class Tags(object):
         for i in self.context.datagrid_tags:
             questions = api.content.find(portal_type="qa Question", Subject=i['name'])
             approved_answers = []
+
             for question in questions:
                 obj = question.getObject()
                 if obj.approved_answer and obj.approved_answer.to_object:
                     approved_answers.append(question)
+
             result.append({
                 'id': i['uid'],
                 'name': i['name'],

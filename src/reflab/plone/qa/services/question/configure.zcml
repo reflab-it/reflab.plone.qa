@@ -1,0 +1,62 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    >
+
+  <adapter
+      factory=".get_activity.Activity"
+      name="activity"
+      />  
+
+  <adapter
+      factory=".get_followers.Followers"
+      name="followers"
+      />       
+
+  <adapter
+      factory=".get_related.Related"
+      name="related"
+      />      
+
+  <adapter
+      factory=".get_stats.Stats"
+      name="stats"
+      />  
+
+  <!-- TODO: rename this in '@activity' -->
+  <plone:service
+      method="GET"
+      factory=".get_activity.ActivityGet"
+      for="...content.qa_question.IQaQuestion"
+      permission="zope2.View"
+      name="@related-objects"
+      />
+   
+  <!-- TODO: rename this in '@followers' -->
+  <plone:service
+      method="GET"
+      factory=".get_followers.FollowersGet"
+      for="...content.qa_question.IQaQuestion"
+      permission="zope2.View"
+      name="@get-followers"
+      />
+   
+  <!-- TODO: rename this in '@related' -->
+  <plone:service
+      method="GET"
+      factory=".get_related.RelatedGet"
+      for="...content.qa_question.IQaQuestion"
+      permission="zope2.View"
+      name="@get-similars"
+      />   
+
+  <!-- TODO: rename this in '@stats' -->
+  <plone:service
+    method="GET"
+    for="...content.qa_question.IQaQuestion"
+    factory=".get_stats.StatsGet"
+    name="@get-question-stat"
+    permission="zope2.View"
+    />
+
+</configure>
