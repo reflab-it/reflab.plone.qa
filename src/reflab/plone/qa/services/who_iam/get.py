@@ -5,7 +5,8 @@ from plone.restapi.services import Service
 from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
-from ..related_objects.get import get_question_fields
+
+from ..fields import get_question_fields
 
 @implementer(IExpandableElement)
 @adapter(Interface, Interface)

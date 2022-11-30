@@ -60,4 +60,15 @@
     permission="zope2.View"
     />      
 
+  <!-- TODO: questo endpoit andrebbe fatto contestuale rispetto al contenuto da creare 
+       farei tre endpoit diversi: post_question (@question), post_answer (@answer), post_comment (@comment)
+  -->  
+  <plone:service
+    method="POST"
+    for="zope.interface.Interface"
+    factory=".post_content.Content"
+    name="@insert_post"
+    permission="zope2.View"
+    />
+
 </configure>

@@ -74,15 +74,9 @@
   <!-- Subscribers -->
   <subscriber
       for=".content.qa_answer.IQaAnswer
-          zope.lifecycleevent.IObjectCreatedEvent"
+          zope.lifecycleevent.IObjectAddedEvent"
       handler=".subscribers.on_answer_added"
       />  
-
-  <!-- <subscriber
-      for=".content.qa_comment.IQaComment
-          zope.lifecycleevent.IObjectCreatedEvent"
-      handler=".subscribers.on_comment_added"
-      />   -->
 
   <subscriber
       for=".content.qa_comment.IQaComment

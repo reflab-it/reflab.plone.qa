@@ -59,4 +59,12 @@
     permission="zope2.View"
     />
 
+  <plone:service
+    method="POST"
+    for="...content.qa_question.IQaQuestion"
+    factory=".post_follow.Follow"
+    name="@follow"
+    permission="zope2.View"
+    />
+
 </configure>
