@@ -30,7 +30,7 @@ class IQaQuestion(model.Schema):
         'activity',
         label=u'Activity',
         fields=('creators', 'approved_answer',
-                'followed_by', 'favorited_by', 'closed_by', 'voted_up_by',
+                'followed_by', 'voted_up_by',
                 'voted_down_by', 'viewed_by')
     )
 
@@ -79,7 +79,7 @@ class IQaQuestion(model.Schema):
     )
 
     creators = schema.Tuple(
-        title=_('label_qa_question_creators', 'Authors'),
+        title=_('label_qa_question_creators', 'Author'),
         value_type=schema.TextLine(),
         required=False,
         missing_value=(),
@@ -93,23 +93,6 @@ class IQaQuestion(model.Schema):
         required=False,
         missing_value=[],
         default=[],
-    )
-
-    directives.read_permission(favorited_by='cmf.ReviewPortalContent')
-    directives.write_permission(favorited_by='cmf.ReviewPortalContent')
-    favorited_by = schema.List(
-        title=_(u'Favorited by'),
-        value_type=schema.TextLine(),
-        required=False,
-        missing_value=[],
-        default=[],
-    )
-
-    directives.read_permission(closed_by='cmf.ReviewPortalContent')
-    directives.write_permission(closed_by='cmf.ReviewPortalContent')
-    closed_by = schema.TextLine(
-        title=_(u'Closed by'),
-        required=False
     )
 
     directives.read_permission(voted_up_by='cmf.ReviewPortalContent')
@@ -212,5 +195,5 @@ class QaQuestion(Container):
 
     def _set_subjects(self, value):
         self.subject = value
-        
+
     subjects = property(_get_subjects, _set_subjects)
