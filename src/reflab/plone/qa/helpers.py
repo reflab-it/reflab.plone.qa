@@ -1,7 +1,9 @@
 from io import StringIO
-from plone import api
+from plone.api import content as content_api
+from plone.api import user as user_api
 from markdown import Markdown
 from Products.CMFPlone.browser.search import BAD_CHARS, quote, quote_chars
+from plone.i18n.normalizer import idnormalizer
 
 
 def _unmark_element(element, stream=None):
@@ -27,9 +29,58 @@ def markdown_to_text(markdown_string):
     return __md.convert(markdown_string)
 
 
-def get_user_settings(username):
-    contents = api.content.find(portal_type='qa User Settings', Title=username)
-    return contents[0].getObject() if len(contents) > 0 else None
+def _safe_username(username):
+    return idnormalizer.normalize(username)
+
+
+def _get_settings_folder(qa_folder):
+    relation = getattr(qa_folder, 'related_user_settings', None)
+    if not relation:
+        return None
+
+    return relation.to_object
+
+
+def create_user_settings(username, qa_folder):
+    settings_folder = _get_settings_folder(qa_folder)
+
+    if settings_folder is None:
+        raise KeyError('Settings folder not set')
+
+    safe_username = _safe_username(username)
+    display_name = username
+    plone_user = user_api.get(username)
+    if plone_user:
+        fullname = plone_user.getProperty('fullname', '')
+        lastname = plone_user.getProperty('lastname', '')
+        if fullname or lastname:
+            display_name = ' '.join([fullname, lastname])
+
+    if safe_username in settings_folder.objectIds():
+        raise KeyError('User folder alredy exists')
+
+    user_folder = content_api.create(
+        settings_folder, 'qa User Settings',
+        id=safe_username,
+        display_name=display_name,
+        title=username
+    )
+
+    return user_folder
+
+
+def get_user_settings(username, qa_folder):
+    settings_folder = _get_settings_folder(qa_folder)
+
+    if settings_folder is None:
+        return None
+
+    safe_username = _safe_username(username)
+
+    if safe_username not in settings_folder.objectIds():
+        return None
+
+    return settings_folder[safe_username]
 
 
 def munge_search_term(search_text):

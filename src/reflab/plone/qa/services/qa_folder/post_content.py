@@ -8,8 +8,11 @@ import plone.protect.interfaces
 import json
 import uuid
 
+from ...content.qa_answer import IQaAnswer
+
 
 class Content(Service):
+
     def reply(self):
         # disable cors
         if "IDisableCSRFProtection" in dir(plone.protect.interfaces):
@@ -66,12 +69,15 @@ class Content(Service):
                         title=_title,
                         creators=(user_name,),
                         added_at=datetime.now(),
+                        followed_by=[user_name],
                         text=RichTextValue(
                             raw=data.get("data") or "", outputMimeType="text/plain"
                         ),
                     )
+
                     response["status"] = "ok"
                     response["message"] = "created"
+
             except Exception:
                 response["status"] = "error"
                 response["message"] = "unable to created"
@@ -88,6 +94,15 @@ class Content(Service):
                     added_at=datetime.now(),
                     text=data.get("data") or "",
                 )
+
+                if IQaAnswer.providedBy(parent):
+                    question = parent.aq_parent
+                else:
+                    question = parent
+
+                if user_name not in question.followed_by:
+                    question.followed_by.append(user_name)
+
                 response["status"] = "ok"
                 response["message"] = "created"
             except Exception:
@@ -109,6 +124,10 @@ class Content(Service):
                         raw=data.get("data") or "", outputMimeType="text/plain"
                     ),
                 )
+
+                if user_name not in question.followed_by:
+                    question.followed_by.append(user_name)
+
                 response["status"] = "ok"
                 response["message"] = "created"
             except Exception:

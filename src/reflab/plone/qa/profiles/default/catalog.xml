@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object name="portal_catalog">
-  <!-- QUESTION SPECIFIC --> 
+  <!-- QUESTION SPECIFIC -->
   <index name="answer_count" meta_type="FieldIndex">
     <indexed_attr value="answer_count"/>
   </index>
@@ -15,12 +15,12 @@
     <indexed_attr value="favorite_count"/>
   </index>
   <column value="favorite_count"/>
-  
+
   <index name="followed_count" meta_type="FieldIndex">
     <indexed_attr value="followed_count"/>
   </index>
   <column value="followed_count"/>
-  
+
   <index name="last_activity_at" meta_type="DateIndex">
     <indexed_attr value="last_activity_at"/>
   </index>
@@ -56,8 +56,14 @@
   </index>
   <column value="comment_count"/>
 
+  <index name="voted_up_by" meta_type="KeywordIndex">
+    <indexed_attr value="voted_up_by"/>
+  </index>
 
-  
-  
-  
+  <index name="voted_down_by" meta_type="KeywordIndex">
+    <indexed_attr value="voted_down_by"/>
+  </index>
+
+
+
 </object>

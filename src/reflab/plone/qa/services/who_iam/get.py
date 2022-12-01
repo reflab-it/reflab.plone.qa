@@ -5,8 +5,12 @@ from plone.restapi.services import Service
 from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
+from zope.interface import alsoProvides
+from plone.protect.interfaces import IDisableCSRFProtection
 
 from ..fields import get_question_fields
+from ...helpers import get_user_settings
+from ...helpers import create_user_settings
 
 @implementer(IExpandableElement)
 @adapter(Interface, Interface)
@@ -32,7 +36,7 @@ class WhoIam(object):
         username = None
         user_full_name = None
         status = None
-        
+
         # getting user data or none
         if api.user.is_anonymous():
             status = 'anonymous'
@@ -43,7 +47,19 @@ class WhoIam(object):
                 uid = user_data.id
                 username = user_data.getUserName()
                 user_full_name = user_data.getProperty('fullname')
-            except:
+
+                # # Also create the user folder settings if it not exists
+                for item in api.content.find(portal_type='qa Folder'):
+                    qa_folder = item.getObject()
+                    with api.env.adopt_roles(roles=['Manager']):
+                        if get_user_settings(username, qa_folder) is None:
+                            alsoProvides(self.request, IDisableCSRFProtection)
+                            try:
+                                create_user_settings(username, qa_folder)
+                            except KeyError:
+                                pass
+            except Exception:
+                raise Exception
                 status = 'error'
 
         result = {

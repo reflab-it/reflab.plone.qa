@@ -10,6 +10,9 @@ from collective.z3cform.datagridfield import DataGridFieldFactory
 from collective.z3cform.datagridfield import DictRow
 from plone.autoform import directives
 from plone.supermodel import model
+from plone.app.z3cform.widget import RelatedItemsFieldWidget
+from z3c.relationfield.schema import RelationChoice
+from plone.app.multilingual.browser.interfaces import make_relation_root_path
 
 class ITagRowSchema(Interface):
 
@@ -17,7 +20,7 @@ class ITagRowSchema(Interface):
         title=u'uid',
         required=False,
     )
-    
+
     name = schema.TextLine(
         title=u'name',
         required=False,
@@ -33,6 +36,7 @@ class ITagRowSchema(Interface):
         required=False,
         default=False,
     )
+
 
 class IQaFolder(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaFolder
@@ -50,6 +54,20 @@ class IQaFolder(model.Schema):
         required=False,
     )
     directives.widget('datagrid_tags', DataGridFieldFactory)
+
+    related_user_settings = RelationChoice(
+        title=u"Users settings folder",
+        vocabulary='plone.app.vocabularies.Catalog',
+        required=False,
+    )
+    directives.widget(
+        "related_user_settings",
+        RelatedItemsFieldWidget,
+        pattern_options={
+            "selectableTypes": ["qa Settings Folder"],
+            "basePath": make_relation_root_path,
+        },
+    )
 
 
 @implementer(IQaFolder)

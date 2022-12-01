@@ -2,15 +2,16 @@ from plone import api
 
 from ..helpers import get_user_settings
 from ..vocabularies import QuestionSubjectsVocabularyFactory
+from ..content.qa_answer import IQaAnswer
 
-
-def get_user_fields(username):
+def get_user_fields(username, qa_folder):
     fallback = username.split('@')[0]
     result = {
         'fullname': fallback,
         'id': ''
     }
-    us = get_user_settings(username)
+    api.env.adopt_roles(roles=['Manager'])
+    us = get_user_settings(username, qa_folder)
     if us:
         display_name = getattr(us, 'display_name', None) or fallback
         result['fullname'] = display_name
@@ -18,9 +19,10 @@ def get_user_fields(username):
     else:
         plone_user = api.user.get(username=username)
         if plone_user:
-            fullname = plone_user.getProperty('fullname', None) or fallback
-            if fullname:
-                result['fullname'] = fullname
+            fullname = plone_user.getProperty('fullname', '')
+            lastname = plone_user.getProperty('lastname', '')
+            if fullname or lastname:
+                result['fullname'] = ' '.join([fullname, lastname])
     return result
 
 
@@ -33,6 +35,7 @@ def get_question_fields(item, is_preview=False):
         obj = item
         item = None
 
+    qa_folder = obj.aq_parent
     author = obj.creators and obj.creators[0] or 'REMOVED USER'
     approved_answer = obj.approved_answer.to_object if obj.approved_answer else None
 
@@ -51,7 +54,7 @@ def get_question_fields(item, is_preview=False):
         'id': obj.id,
         'title': obj.title,
         'description': item and item.Description or '',  # The description is from the brain only
-        'author': get_user_fields(author),
+        'author': get_user_fields(author, qa_folder),
         'approved': approved_answer and True or False,
         'approved_answer_user': {},
         'subs': obj.answer_count(),
@@ -64,7 +67,7 @@ def get_question_fields(item, is_preview=False):
 
     if result['approved']:
         approved_answer_username = approved_answer.creators and approved_answer.creators[0] or 'REMOVED USER'
-        result['approved_answer_user'] = get_user_fields(approved_answer_username)
+        result['approved_answer_user'] = get_user_fields(approved_answer_username, qa_folder)
 
     if not is_preview:
         result['text'] = obj.text and obj.text.output_relative_to(obj) or ''
@@ -77,11 +80,12 @@ def get_question_fields(item, is_preview=False):
 def get_answer_fields(item):
     comments = [get_comment_fields(c) for c in item.listFolderContents(contentFilter={"portal_type": "qa Comment"})]
     author = item.creators and item.creators[0] or 'REMOVED USER'
+    qa_folder = item.aq_parent.aq_parent
     return {
         'id': item.id,
         # 'title': item.title,
         # 'description': item.description,
-        'author': get_user_fields(author),
+        'author': get_user_fields(author, qa_folder),
         'text': item.text and item.text.output_relative_to(item) or '',
         'approved': item.UID() == item.aq_parent.approved_answer,
         'deleted': api.content.get_state(item) == 'deleted',
@@ -106,11 +110,15 @@ def get_answer_fields(item):
 
 def get_comment_fields(item):
     author = item.creators and item.creators[0] or 'REMOVED USER'
+    qa_folder = item.aq_parent
+    if IQaAnswer.providedBy(qa_folder):
+        qa_folder = item.aq_parent
+
     return {
         'id': item.id,
         # 'title': item.title,
         # 'description': item.description,
-        'author': get_user_fields(author),
+        'author': get_user_fields(author, qa_folder),
         'text': item.text,
         'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
