@@ -33,16 +33,17 @@ class Tags(object):
 
         if not expand:
             return result
-
+        print(self.request.form)
         result = []
         logger.info('getting tags')
 
-        user = user_api.get_current()
-        username = user.getUserName()
-        user_settings = get_user_settings(username, self.context)
         followed_tags = []
-        if user_settings:
-            followed_tags = user_settings.followed_tags
+        if 'followed' in self.request.keys():
+            user = user_api.get_current()
+            username = user.getUserName()
+            user_settings = get_user_settings(username, self.context)
+            if user_settings:
+                followed_tags = user_settings.followed_tags
 
         questions = content_api.find(
             context=self.context, portal_type="qa Question"
@@ -51,12 +52,14 @@ class Tags(object):
         for tag in self.context.datagrid_tags:
             approved_answers = []
             tag_questions = 0
-            for question in questions:
-                if tag['uid'] in question.Subject:
-                    tag_questions += 1
-                    obj = question.getObject()
-                    if obj.approved_answer and obj.approved_answer.to_object:
-                        approved_answers.append(question)
+
+            if 'stats' in self.request.keys():
+                for question in questions:
+                    if tag['uid'] in question.Subject:
+                        tag_questions += 1
+                        obj = question.getObject()
+                        if obj.approved_answer and obj.approved_answer.to_object:
+                            approved_answers.append(question)
 
             result.append({
                 'id': tag['uid'],
