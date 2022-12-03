@@ -87,8 +87,10 @@ class VoteUp(Service):
             result = remove_and_add_if_need(userid, self.context.voted_down_by, self.context.voted_up_by)
             if result['first_data_set'] is not None:
                 self.context.voted_down_by = result['first_data_set']
+                self.context.reindexObject(idxs=['voted_down_by'])
             if result['second_data_set'] is not None:
                 self.context.voted_up_by = result['second_data_set']
+                self.context.reindexObject(idxs=['voted_up_by'])
             return {
                 'status': 'ok',
                 'message': result['action'],
@@ -115,8 +117,10 @@ class VoteDown(Service):
             result = remove_and_add_if_need(userid, self.context.voted_up_by, self.context.voted_down_by)
             if result['first_data_set'] is not None:
                 self.context.voted_up_by = result['first_data_set']
+                self.context.reindexObject(idxs=['voted_up_by'])
             if result['second_data_set'] is not None:
                 self.context.voted_down_by = result['second_data_set']
+                self.context.reindexObject(idxs=['voted_down_by'])
             return {
                 'status': 'ok',
                 'message': result['action'],
