@@ -69,7 +69,7 @@ def get_question_fields(item, is_preview=False):
         result['last_activity'] = {
             'at': item.last_activity_at.asdatetime().isoformat() if item.last_activity_at else None,
             'by': get_user_fields(item.last_activity_by, qa_folder) if item.last_activity_by else None,
-            'what': item.last_activity_what,
+            'what': item.last_activity_what if item.last_activity_what else None,
         }
     elif obj is not None:
         result['last_activity'] = obj.last_activity()
