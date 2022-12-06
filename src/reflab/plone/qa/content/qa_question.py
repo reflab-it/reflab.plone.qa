@@ -167,9 +167,9 @@ class QaQuestion(Container):
 
     def last_activity(self):
         result = {
-            'at': None,
-            'by': None,
-            'what': None
+            'at': self.created(),
+            'by': self.Creator(),
+            'what': 'question'
         }
 
         def _check(obj):

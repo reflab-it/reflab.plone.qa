@@ -101,7 +101,7 @@ def munge_search_term(search_text):
     return r
 
 
-def timed(func):
+def time_profiler(func):
     """This decorator prints the execution time for the decorated function."""
 
     @wraps(func)

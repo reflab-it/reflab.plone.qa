@@ -1,16 +1,29 @@
 from plone import api
+from plone.memoize import ram
+from time import time
 
 from ..helpers import get_user_settings
 from ..vocabularies import QuestionSubjectsVocabularyFactory
 from ..content.qa_answer import IQaAnswer
 
-def get_user_fields(username, qa_folder):
+
+def _user_fields_cachekey(method, username, qa_folder_uid):
+    cache_time = str(time() // (60 * 60))  # 60 minutes
+    return (username, qa_folder_uid, cache_time)
+
+
+@ram.cache(_user_fields_cachekey)
+def _cached_user_fields(username, qa_folder_uid):
     fallback = username.split('@')[0]
     result = {
         'fullname': fallback,
         'id': ''
     }
     api.env.adopt_roles(roles=['Manager'])
+    qa_folder = api.content.get(UID=qa_folder_uid)
+    if qa_folder is None:
+        return result
+
     us = get_user_settings(username, qa_folder)
     if us:
         display_name = getattr(us, 'display_name', None) or fallback
@@ -24,6 +37,11 @@ def get_user_fields(username, qa_folder):
             if fullname or lastname:
                 result['fullname'] = ' '.join([fullname, lastname])
     return result
+
+
+def get_user_fields(username, qa_folder):
+    qa_folder_uid = qa_folder.UID()
+    return _cached_user_fields(username, qa_folder_uid)
 
 
 def get_question_fields(item, is_preview=False):
@@ -76,7 +94,7 @@ def get_question_fields(item, is_preview=False):
         result['last_activity']['at'] = result['last_activity']['at'].asdatetime().isoformat() if result['last_activity']['at'] else None
         result['last_activity']['by'] = get_user_fields(result['last_activity']['by'], qa_folder) if result['last_activity']['by'] else None
 
-    result['has_activity'] = result['last_activity']['at'] is not None
+    result['has_activity'] = result['last_activity']['what'] in ['comment', 'answer']
 
 
     if result['approved']:

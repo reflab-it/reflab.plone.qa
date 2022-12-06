@@ -8,7 +8,7 @@ from zope.interface import Interface
 
 from ...content.qa_folder import IQaFolder
 from ...helpers import munge_search_term
-from ...helpers import timed
+from ...helpers import time_profiler
 from ..fields import get_question_fields
 
 
@@ -19,7 +19,7 @@ class Questions(object):
         self.context = context
         self.request = request
 
-    @timed
+    @time_profiler
     def __call__(self, expand=False):
         result = {
             "questions": {

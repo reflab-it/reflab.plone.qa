@@ -1,18 +1,27 @@
 # -*- coding: utf-8 -*-
 from plone.api import content as content_api
 from plone.api import user as user_api
+from plone.memoize import ram
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
 from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
+from time import time
 
 from ...content.qa_folder import IQaFolder
 from ...helpers import get_user_settings
+from ...helpers import time_profiler
 
 import logging
 
 logger = logging.getLogger("Plone")
+
+
+def _tags_stats_cachekey(method, self, qa_folder_uid):
+    cache_time = str(time() // (60 * 30))  # 30 minutes
+    return (qa_folder_uid, cache_time)
+
 
 @implementer(IExpandableElement)
 @adapter(IQaFolder, Interface)
@@ -22,6 +31,33 @@ class Tags(object):
         self.context = context
         self.request = request
 
+    @ram.cache(_tags_stats_cachekey)
+    def stats(self, qa_folder_uid):
+        result = {}
+        qa_folder = content_api.get(UID=qa_folder_uid)
+        if qa_folder is None:
+            return result
+
+        questions = content_api.find(
+            context=qa_folder,
+            portal_type="qa Question"
+        )
+
+        for question in questions:
+            for tag in question.Subject:
+                if tag not in result.keys():
+                    result[tag] = {
+                        'questions': 0,
+                        'approved': 0
+                    }
+                result[tag]['questions'] += 1
+                if question.has_approved_answer:
+                    result[tag]['approved'] += 1
+
+        return result
+
+
+    @time_profiler
     def __call__(self, expand=False):
         result = {
             'tags': {
@@ -35,7 +71,6 @@ class Tags(object):
             return result
         print(self.request.form)
         result = []
-        logger.info('getting tags')
 
         followed_tags = []
         if 'followed' in self.request.keys():
@@ -45,33 +80,21 @@ class Tags(object):
             if user_settings:
                 followed_tags = user_settings.followed_tags
 
-        questions = content_api.find(
-            context=self.context, portal_type="qa Question"
-        )
+        stats = {}
+        if 'stats' in self.request.keys():
+            stats = self.stats(self.context.UID())
 
         for tag in self.context.datagrid_tags:
-            approved_answers = []
-            tag_questions = 0
-
-            if 'stats' in self.request.keys():
-                for question in questions:
-                    if tag['uid'] in question.Subject:
-                        tag_questions += 1
-                        obj = question.getObject()
-                        if obj.approved_answer and obj.approved_answer.to_object:
-                            approved_answers.append(question)
-
             result.append({
                 'id': tag['uid'],
                 'name': tag['name'],
                 'popular': tag['popular'],
                 'description': tag['description'],
-                'questions': tag_questions,
-                'approved_answers': len(approved_answers),
+                'questions': stats.get(tag['uid'], {}).get('questions', None),
+                'approved_answers': stats.get(tag['uid'], {}).get('approved', None),
                 'followed': tag['uid'] in followed_tags
             })
 
-        logger.info('returning tags')
         return result
 
 
