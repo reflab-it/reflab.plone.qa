@@ -43,7 +43,7 @@
             <element>plone.app.querystring.operation.int.largerThan</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>         
+    </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.followed_count">
@@ -57,7 +57,7 @@
             <element>plone.app.querystring.operation.int.largerThan</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>    
+    </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.followed_count">
@@ -71,7 +71,7 @@
             <element>plone.app.querystring.operation.int.largerThan</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>    
+    </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.voted_up_count">
@@ -85,7 +85,7 @@
             <element>plone.app.querystring.operation.int.largerThan</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>     
+    </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.voted_down_count">
@@ -99,7 +99,7 @@
             <element>plone.app.querystring.operation.int.largerThan</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>     
+    </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.points">
@@ -113,7 +113,7 @@
             <element>plone.app.querystring.operation.int.largerThan</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>     
+    </records>
 
     <records interface="plone.app.querystring.interfaces.IQueryField"
              prefix="plone.app.querystring.field.last_activity_at">
@@ -131,7 +131,7 @@
             <element>plone.app.querystring.operation.date.beforeToday</element>
             <element>plone.app.querystring.operation.date.afterToday</element>
             <element>plone.app.querystring.operation.date.beforeRelativeDate</element>
-            <element>plone.app.querystring.operation.date.afterRelativeDate</element>     
+            <element>plone.app.querystring.operation.date.afterRelativeDate</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
     </records>
@@ -143,10 +143,10 @@
         <value key="enabled">True</value>
         <value key="sortable">True</value>
         <value key="operations">
-            <element>plone.app.querystring.operation.boolean.isTrue</element>     
-            <element>plone.app.querystring.operation.boolean.isFalse</element>     
+            <element>plone.app.querystring.operation.boolean.isTrue</element>
+            <element>plone.app.querystring.operation.boolean.isFalse</element>
         </value>
        <value key="group" i18n:translate="">Q&amp;A</value>
-    </records>      
+    </records>
 
-</registry>    
+</registry>

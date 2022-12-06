@@ -20,10 +20,10 @@ def _get_parent_question(object):
 def on_answer_added(object, event):
     question = _get_parent_question(object)
     if question:
-        question.reindexObject(idxs=['last_activity_at', 'answer_count'])
+        question.reindexObject(idxs=['last_activity_at', 'last_activity_by', 'last_activity_what', 'answer_count'])
 
 
 def on_comment_added(object, event):
     question = _get_parent_question(object)
     if question:
-        question.reindexObject(idxs=['last_activity_at'])
+        question.reindexObject(idxs=['last_activity_at', 'last_activity_by', 'last_activity_what', 'comment_count'])

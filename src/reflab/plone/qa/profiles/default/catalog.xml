@@ -11,11 +11,6 @@
   </index>
   <column value="view_count"/>
 
-  <index name="favorite_count" meta_type="FieldIndex">
-    <indexed_attr value="favorite_count"/>
-  </index>
-  <column value="favorite_count"/>
-
   <index name="followed_count" meta_type="FieldIndex">
     <indexed_attr value="followed_count"/>
   </index>
@@ -25,6 +20,16 @@
     <indexed_attr value="last_activity_at"/>
   </index>
   <column value="last_activity_at"/>
+
+  <index name="last_activity_by" meta_type="FieldIndex">
+    <indexed_attr value="last_activity_by"/>
+  </index>
+  <column value="last_activity_by"/>
+
+  <index name="last_activity_what" meta_type="FieldIndex">
+    <indexed_attr value="last_activity_what"/>
+  </index>
+  <column value="last_activity_what"/>
 
   <index name="has_approved_answer" meta_type="BooleanIndex">
     <indexed_attr value="has_approved_answer"/>

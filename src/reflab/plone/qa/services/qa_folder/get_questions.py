@@ -8,6 +8,7 @@ from zope.interface import Interface
 
 from ...content.qa_folder import IQaFolder
 from ...helpers import munge_search_term
+from ...helpers import timed
 from ..fields import get_question_fields
 
 
@@ -18,6 +19,7 @@ class Questions(object):
         self.context = context
         self.request = request
 
+    @timed
     def __call__(self, expand=False):
         result = {
             "questions": {
@@ -74,8 +76,8 @@ class Questions(object):
         items = catalog(**query)
 
         # BATCHING
-        start_at = self.request.get('start_at', None)
-        end_at = self.request.get('end_at', None)
+        start_at = self.request.get('start_at', 0)
+        end_at = self.request.get('end_at', 100)
 
         if start_at:
             start_at = int(start_at)
@@ -95,7 +97,7 @@ class Questions(object):
         result["questions"]['status'] = 'ok'
         result["questions"]['questions'] = results
         result["questions"]['total_questions'] = len(items)
-        result["questions"]['page'] = int((end_at+1) / (end_at - start_at) )
+        result["questions"]['page'] = int((end_at + 1) / (end_at - start_at))
 
         return result
 

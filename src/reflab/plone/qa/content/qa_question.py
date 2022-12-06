@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from DateTime import DateTime
 from plone import api
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
@@ -166,29 +165,48 @@ class QaQuestion(Container):
                     count += 1
         return count
 
-    @property
-    def last_activity_at(self):
-        result = self.created()
-        _dates = []
+    def last_activity(self):
+        result = {
+            'at': None,
+            'by': None,
+            'what': None
+        }
+
+        def _check(obj):
+            if result['at'] is None or result['at'] < obj.created():
+                result['at'] = obj.created()
+                result['by'] = obj.Creator()
+                if IQaComment.providedBy(obj):
+                    result['what'] = 'comment'
+                if IQaAnswer.providedBy(obj):
+                    result['what'] = 'answer'
+
         for id, item in self.contentItems():
             if IQaComment.providedBy(item):
-                _dates.append(item.created())
+                _check(item)
             if IQaAnswer.providedBy(item):
-                _dates.append(item.created())
+                _check(item)
                 for id2, item2 in item.contentItems():
                     if IQaComment.providedBy(item2):
-                        _dates.append(item2.created())
-
-        if _dates:
-            _dates.sort()
-            result = _dates[-1]
+                        _check(item2)
 
         return result
 
     @property
+    def last_activity_at(self):
+        return self.last_activity()['at']
+
+    @property
+    def last_activity_by(self):
+        return self.last_activity()['by']
+
+    @property
+    def last_activity_what(self):
+        return self.last_activity()['what']
+
+    @property
     def has_approved_answer(self):
         return True if (self.approved_answer and self.approved_answer.to_object) else False
-
 
     def _get_subjects(self):
         return self.subject

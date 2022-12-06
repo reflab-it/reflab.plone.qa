@@ -65,6 +65,19 @@ def get_question_fields(item, is_preview=False):
         'tags': tags,
     }
 
+    if item is not None:
+        result['last_actity'] = {
+            'at': item.last_activity_at.asdatetime().isoformat() if item.last_activity_at else None,
+            'by': item.last_activity_by,
+            'what': item.last_activity_what,
+        }
+    elif obj is not None:
+        result['last_actity'] = obj.last_activity()
+        result['last_actity']['at'] = result['last_actity']['at'].asdatetime().isoformat() if result['last_actity']['at'] else None
+
+    result['has_activity'] = result['last_actity']['at'] is not None
+
+
     if result['approved']:
         approved_answer_username = approved_answer.creators and approved_answer.creators[0] or 'REMOVED USER'
         result['approved_answer_user'] = get_user_fields(approved_answer_username, qa_folder)

@@ -1,9 +1,16 @@
+import logging
+import time
+
+from functools import wraps
 from io import StringIO
 from plone.api import content as content_api
 from plone.api import user as user_api
 from markdown import Markdown
 from Products.CMFPlone.browser.search import BAD_CHARS, quote, quote_chars
 from plone.i18n.normalizer import idnormalizer
+
+
+logger = logging.getLogger("Plone")
 
 
 def _unmark_element(element, stream=None):
@@ -92,3 +99,17 @@ def munge_search_term(search_text):
     r = " AND ".join(r)
     r = quote_chars(r) + '*'
     return r
+
+
+def timed(func):
+    """This decorator prints the execution time for the decorated function."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        logger.info(f"{func.__module__} - {func}: ran in {round(end - start, 4)}s")
+        return result
+
+    return wrapper
