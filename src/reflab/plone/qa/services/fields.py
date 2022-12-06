@@ -66,16 +66,17 @@ def get_question_fields(item, is_preview=False):
     }
 
     if item is not None:
-        result['last_actity'] = {
+        result['last_activity'] = {
             'at': item.last_activity_at.asdatetime().isoformat() if item.last_activity_at else None,
-            'by': item.last_activity_by,
+            'by': get_user_fields(item.last_activity_by, qa_folder) if item.last_activity_by else None,
             'what': item.last_activity_what,
         }
     elif obj is not None:
-        result['last_actity'] = obj.last_activity()
-        result['last_actity']['at'] = result['last_actity']['at'].asdatetime().isoformat() if result['last_actity']['at'] else None
+        result['last_activity'] = obj.last_activity()
+        result['last_activity']['at'] = result['last_activity']['at'].asdatetime().isoformat() if result['last_activity']['at'] else None
+        result['last_activity']['by'] = get_user_fields(result['last_activity']['by'], qa_folder) if result['last_activity']['by'] else None
 
-    result['has_activity'] = result['last_actity']['at'] is not None
+    result['has_activity'] = result['last_activity']['at'] is not None
 
 
     if result['approved']:
