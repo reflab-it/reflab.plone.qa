@@ -14,7 +14,7 @@ from ..fields import get_question_fields
 
 @implementer(IExpandableElement)
 @adapter(IQaFolder, Interface)
-class MyFollowed(object):
+class MyApproved(object):
 
     def __init__(self, context, request):
         self.context = context
@@ -22,8 +22,8 @@ class MyFollowed(object):
 
     def __call__(self, expand=False):
         result = {
-            'my-followed': {
-                '@id': '{}/@get-followed-questions'.format(
+            'my-approved': {
+                '@id': '{}/@get-approved-answers'.format(
                     self.context.absolute_url(),
                 ),
             },
@@ -42,7 +42,8 @@ class MyFollowed(object):
                 raise KeyError('User folder for UID {userid} does not exists')
             username = userfolder.Title()
 
-        questions = content_api.find(context=self.context, portal_type='qa Question', followed_by=username)
+        answers = content_api.find(context=self.context, portal_type='qa Answer', Creator=username)
+        questions = [a.getObject().aq_parent for a in answers]
         followed = [get_question_fields(i) for i in questions]
         result['my-followed']['status'] = 'ok'
         result['my-followed']['followed'] = followed
@@ -50,8 +51,8 @@ class MyFollowed(object):
         return result
 
 
-class MyFollowedGet(Service):
+class MyApprovedGet(Service):
 
     def reply(self):
-        my_followed = MyFollowed(self.context, self.request)
-        return my_followed(expand=True)["my-followed"]
+        my_followed = MyApproved(self.context, self.request)
+        return my_followed(expand=True)["my-approved"]

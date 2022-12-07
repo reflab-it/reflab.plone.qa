@@ -19,6 +19,11 @@
       />
 
   <adapter
+      factory=".get_my_approved.MyApproved"
+      name="my-approved"
+      />
+
+  <adapter
       factory=".get_my_voted.MyVoted"
       name="my-voted"
       />
@@ -58,6 +63,14 @@
     factory=".get_my_followed.MyFollowedGet"
     for="...content.qa_folder.IQaFolder"
     name="@get-followed-questions"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    factory=".get_my_approved.MyApprovedGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@get-approved-answers"
     permission="zope2.View"
     />
 

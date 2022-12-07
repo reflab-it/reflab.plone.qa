@@ -27,7 +27,7 @@ def _cached_user_fields(username, qa_folder_uid):
     us = get_user_settings(username, qa_folder)
     if us:
         display_name = getattr(us, 'display_name', None) or fallback
-        result['fullname'] = display_name
+        result['fullname'] = display_name.split('@')[0]
         result['id'] = us.UID()
     else:
         plone_user = api.user.get(username=username)

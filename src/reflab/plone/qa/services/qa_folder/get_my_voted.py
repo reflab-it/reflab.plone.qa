@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.api import content as content_api
 from plone.api import user as user_api
+from plone.api import env as env_api
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
 from zope.component import adapter
@@ -31,7 +32,15 @@ class MyVoted(object):
         if not expand:
             return result
 
-        username = user_api.get_current().getUserName()
+        if 'userid' not in self.request.keys():
+            username = user_api.get_current().getUserName()
+        else:
+            userid = self.request.get('userid')
+            with env_api.adopt_roles(roles=['Manager']):
+                userfolder = content_api.get(UID=userid)
+            if not userfolder:
+                raise KeyError('User folder for UID {userid} does not exists')
+            username = userfolder.Title()
 
         voted_up_questions = content_api.find(
             context=self.context,

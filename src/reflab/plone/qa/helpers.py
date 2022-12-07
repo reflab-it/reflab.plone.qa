@@ -55,7 +55,7 @@ def create_user_settings(username, qa_folder):
         raise KeyError('Settings folder not set')
 
     safe_username = _safe_username(username)
-    display_name = username
+    display_name = username.split('@')[0]
     plone_user = user_api.get(username)
     if plone_user:
         fullname = plone_user.getProperty('fullname', '')
