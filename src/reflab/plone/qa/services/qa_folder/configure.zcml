@@ -11,7 +11,7 @@
   <adapter
       factory=".get_tags.Tags"
       name="tags"
-      />      
+      />
 
   <adapter
       factory=".get_my_followed.MyFollowed"
@@ -21,6 +21,16 @@
   <adapter
       factory=".get_my_voted.MyVoted"
       name="my-voted"
+      />
+
+  <adapter
+      factory=".get_who_i_am.WhoIam"
+      name="who-iam"
+      />
+
+  <adapter
+      factory=".get_who_is.WhoIs"
+      name="who-is"
       />
 
 
@@ -40,9 +50,9 @@
       for="...content.qa_folder.IQaFolder"
       permission="zope2.View"
       name="@tags-list"
-      />      
+      />
 
-  <!-- TODO: rename this in '@my-followed' -->  
+  <!-- TODO: rename this in '@my-followed' -->
   <plone:service
     method="GET"
     factory=".get_my_followed.MyFollowedGet"
@@ -50,25 +60,42 @@
     name="@get-followed-questions"
     permission="zope2.View"
     />
-  
-  <!-- TODO: rename this in '@my-voted' -->  
+
+  <!-- TODO: rename this in '@my-voted' -->
   <plone:service
     method="GET"
     factory=".get_my_voted.MyVotedGet"
     for="...content.qa_folder.IQaFolder"
     name="@get-voted-questions"
     permission="zope2.View"
-    />      
+    />
 
-  <!-- TODO: questo endpoit andrebbe fatto contestuale rispetto al contenuto da creare 
+  <!-- TODO: questo endpoit andrebbe fatto contestuale rispetto al contenuto da creare
        farei tre endpoit diversi: post_question (@question), post_answer (@answer), post_comment (@comment)
-  -->  
+  -->
   <plone:service
     method="POST"
-    for="zope.interface.Interface"
     factory=".post_content.Content"
+    for="zope.interface.Interface"
     name="@insert_post"
     permission="zope2.View"
     />
+
+  <plone:service
+    method="GET"
+    factory=".get_who_i_am.WhoIamGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@who-iam"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    factory=".get_who_is.WhoIsGet"
+    for="zope.interface.Interface"
+    name="@who-is"
+    permission="zope2.View"
+    />
+
 
 </configure>

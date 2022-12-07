@@ -2,7 +2,6 @@
 
   <include package=".qa_folder" />
   <include package=".question" />
-  <include package=".who_iam" />
   <include package=".score" />
   <include package=".users_settings" />
 
