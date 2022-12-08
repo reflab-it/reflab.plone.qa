@@ -70,7 +70,7 @@
     method="GET"
     factory=".get_my_approved.MyApprovedGet"
     for="...content.qa_folder.IQaFolder"
-    name="@get-approved-answers"
+    name="@get-approved-questions"
     permission="zope2.View"
     />
 

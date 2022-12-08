@@ -42,11 +42,20 @@ class MyApproved(object):
                 raise KeyError('User folder for UID {userid} does not exists')
             username = userfolder.Title()
 
-        answers = content_api.find(context=self.context, portal_type='qa Answer', Creator=username)
-        questions = [a.getObject().aq_parent for a in answers]
-        followed = [get_question_fields(i) for i in questions]
-        result['my-followed']['status'] = 'ok'
-        result['my-followed']['followed'] = followed
+        answers = content_api.find(
+            context=self.context,
+            portal_type='qa Answer',
+            Creator=username,
+            is_approved_answer=True
+        )
+
+        questions = []
+        for answer in answers:
+            question = answer.getObject().aq_parent
+            questions.append(get_question_fields(question))
+
+        result['my-approved']['status'] = 'ok'
+        result['my-approved']['followed'] = questions
 
         return result
 

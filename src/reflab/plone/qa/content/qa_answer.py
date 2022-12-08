@@ -13,7 +13,6 @@ from zope.interface import implementer
 
 from .qa_comment import IQaComment
 
-
 class IQaAnswer(model.Schema):
     """ Marker interface and Dexterity Python Schema for QaAnswer
     """
@@ -40,13 +39,13 @@ class IQaAnswer(model.Schema):
         'creators',
         AjaxSelectFieldWidget,
         vocabulary='plone.app.vocabularies.Users'
-    ) 
+    )
     creators = schema.Tuple(
         title=_('label_qa_answer_creators', 'Authors'),
         value_type=schema.TextLine(),
         required=False,
         missing_value=(),
-    )       
+    )
 
     directives.read_permission(voted_up_by='cmf.ReviewPortalContent')
     directives.write_permission(voted_up_by='cmf.ReviewPortalContent')
@@ -90,3 +89,11 @@ class QaAnswer(Container):
                 if api.content.get_state(item) in states:
                     count += 1
         return count
+
+    def is_approved_answer(self):
+        parent = self.aq_parent
+        approved_answer = None
+        if hasattr(parent, 'approved_answer'):
+            approved_answer = parent.approved_answer.to_object
+
+        return self == approved_answer

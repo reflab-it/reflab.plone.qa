@@ -40,6 +40,12 @@
     <indexed_attr value="followed_by"/>
   </index>
 
+  <!-- ANSWER SPECIFIC -->
+  <index name="is_approved_answer" meta_type="BooleanIndex">
+    <indexed_attr value="is_approved_answer"/>
+  </index>
+  <column value="is_approved_answer"/>
+
   <!-- QA BEHAVIOUR -->
   <index name="voted_up_count" meta_type="FieldIndex">
     <indexed_attr value="voted_up_count"/>

@@ -24,6 +24,7 @@ _FIELD_LABEL['points'] = _('Points')
 _FIELD_LABEL['comment_count'] = _('Comments')
 _FIELD_LABEL['voted_up_by'] = _('Voted up by')
 _FIELD_LABEL['voted_down_by'] = _('Voted down by')
+_FIELD_LABEL['is_approved_answer'] = _('Is approved answer')
 
 
 @implementer(IVocabularyFactory)
