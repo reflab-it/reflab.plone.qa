@@ -9,12 +9,13 @@ from zope.interface import Interface
 from zope.interface import implementer
 
 from ...content.qa_folder import IQaFolder
+from ...content.qa_answer import IQaAnswer
 from ..fields import get_question_fields
 
 
 @implementer(IExpandableElement)
 @adapter(IQaFolder, Interface)
-class MyApproved(object):
+class MyCommented(object):
 
     def __init__(self, context, request):
         self.context = context
@@ -22,8 +23,8 @@ class MyApproved(object):
 
     def __call__(self, expand=False):
         result = {
-            'my-approved': {
-                '@id': '{}/@get-approved-questions'.format(
+            'my-commented': {
+                '@id': '{}/@get-commented-questions"'.format(
                     self.context.absolute_url(),
                 ),
             },
@@ -42,26 +43,34 @@ class MyApproved(object):
                 raise KeyError('User folder for UID {userid} does not exists')
             username = userfolder.Title()
 
-        answers = content_api.find(
+        comments = content_api.find(
             context=self.context,
-            portal_type='qa Answer',
+            portal_type='qa Comment',
             Creator=username,
-            is_approved_answer=True
+            sort_by='created',
+            sort_order='descending'
         )
 
-        questions = []
-        for answer in answers:
-            question = answer.getObject().aq_parent
-            questions.append(get_question_fields(question))
+        questions = {}
+        for comment in comments:
+            parent = comment.getObject().aq_parent
+            if IQaAnswer.providedBy(parent):
+                question = parent.aq_parent
+            else:
+                question = parent
 
-        result['my-approved']['status'] = 'ok'
-        result['my-approved']['approved'] = questions
+            uid = question.UID()
+            if uid not in questions.keys():
+                questions[uid] = get_question_fields(question)
+
+        result['my-commented']['status'] = 'ok'
+        result['my-commented']['commented'] = [q for q in questions.values()]
 
         return result
 
 
-class MyApprovedGet(Service):
+class MyCommentedGet(Service):
 
     def reply(self):
-        my_followed = MyApproved(self.context, self.request)
-        return my_followed(expand=True)["my-approved"]
+        my_followed = MyCommented(self.context, self.request)
+        return my_followed(expand=True)["my-commented"]

@@ -14,7 +14,7 @@ from ..fields import get_question_fields
 
 @implementer(IExpandableElement)
 @adapter(IQaFolder, Interface)
-class MyApproved(object):
+class MyAnswered(object):
 
     def __init__(self, context, request):
         self.context = context
@@ -22,8 +22,8 @@ class MyApproved(object):
 
     def __call__(self, expand=False):
         result = {
-            'my-approved': {
-                '@id': '{}/@get-approved-questions'.format(
+            'my-answered': {
+                '@id': '{}/@get-answered-questions"'.format(
                     self.context.absolute_url(),
                 ),
             },
@@ -46,7 +46,7 @@ class MyApproved(object):
             context=self.context,
             portal_type='qa Answer',
             Creator=username,
-            is_approved_answer=True
+            is_approved_answer=False
         )
 
         questions = []
@@ -54,14 +54,14 @@ class MyApproved(object):
             question = answer.getObject().aq_parent
             questions.append(get_question_fields(question))
 
-        result['my-approved']['status'] = 'ok'
-        result['my-approved']['approved'] = questions
+        result['my-answered']['status'] = 'ok'
+        result['my-answered']['answered'] = questions
 
         return result
 
 
-class MyApprovedGet(Service):
+class MyAnsweredGet(Service):
 
     def reply(self):
-        my_followed = MyApproved(self.context, self.request)
-        return my_followed(expand=True)["my-approved"]
+        my_followed = MyAnswered(self.context, self.request)
+        return my_followed(expand=True)["my-answered"]

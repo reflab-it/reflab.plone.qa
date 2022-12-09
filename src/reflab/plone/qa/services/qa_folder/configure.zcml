@@ -74,6 +74,22 @@
     permission="zope2.View"
     />
 
+  <plone:service
+    method="GET"
+    factory=".get_my_answered.MyAnsweredGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@get-answered-questions"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    factory=".get_my_commented.MyCommentedGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@get-commented-questions"
+    permission="zope2.View"
+    />
+
   <!-- TODO: rename this in '@my-voted' -->
   <plone:service
     method="GET"
