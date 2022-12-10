@@ -3,6 +3,5 @@
   <include package=".qa_folder" />
   <include package=".question" />
   <include package=".score" />
-  <include package=".users_settings" />
 
 </configure>

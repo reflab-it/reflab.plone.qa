@@ -38,6 +38,16 @@
       name="who-is"
       />
 
+  <adapter
+      factory=".get_notifications_options.NotificationsOptions"
+      name="notifications-options"
+      />
+
+  <adapter
+      factory=".get_notifications_settings.NotificationsSettings"
+      name="notifications-settings"
+      />
+
 
   <!-- TODO: rename this in '@questions' -->
   <plone:service
@@ -115,7 +125,7 @@
     factory=".get_who_i_am.WhoIamGet"
     for="...content.qa_folder.IQaFolder"
     name="@who-iam"
-    permission="zope2.View"
+    permission="zope.Public"
     />
 
   <plone:service
@@ -126,5 +136,28 @@
     permission="zope2.View"
     />
 
+  <plone:service
+    method="GET"
+    factory=".get_notifications_options.NotificationsOptionsGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@notifications-options"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="GET"
+    factory=".get_notifications_settings.NotificationsSettingsGet"
+    for="...content.qa_folder.IQaFolder"
+    name="@notifications-settings"
+    permission="zope2.View"
+    />
+
+  <plone:service
+    method="POST"
+    factory=".post_notifications_settings.NotificationsSettingsPost"
+    for="...content.qa_folder.IQaFolder"
+    name="@notifications-settings"
+    permission="zope2.View"
+    />
 
 </configure>
