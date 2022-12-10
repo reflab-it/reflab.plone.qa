@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.api import content as content_api
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
 from zope.component import adapter
@@ -31,11 +32,23 @@ class Activity(object):
         result['activity']['comments'] = []
         result['activity']['answers'] = []
 
-        for answer in self.context.listFolderContents(contentFilter={"portal_type": "qa Answer"}):
-            result['activity']['answers'].append(get_answer_fields(answer))
+        answers = content_api.find(
+            context=self.context,
+            portal_type='qa Answer',
+            sort_on='points, created',
+            sort_order='ascending',
+        )
+
+        for answer_item in answers:
+            answer = answer_item.getObject()
+            if answer.is_approved_answer():
+                result['activity']['answers'].insert(0, get_answer_fields(answer))
+            else:
+                result['activity']['answers'].append(get_answer_fields(answer))
 
         for comment in self.context.listFolderContents(contentFilter={"portal_type": "qa Comment"}):
             result['activity']['comments'].append(get_comment_fields(comment))
+
 
         return result
 

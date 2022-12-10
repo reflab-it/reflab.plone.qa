@@ -119,7 +119,7 @@ def get_answer_fields(item):
         # 'description': item.description,
         'author': get_user_fields(author, qa_folder),
         'text': item.text and item.text.output_relative_to(item) or '',
-        'approved': item.UID() == item.aq_parent.approved_answer,
+        'approved': item.is_approved_answer(),
         'deleted': api.content.get_state(item) == 'deleted',
         '_meta':
         {
