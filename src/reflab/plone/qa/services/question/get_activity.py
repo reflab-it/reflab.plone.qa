@@ -35,16 +35,24 @@ class Activity(object):
         answers = content_api.find(
             context=self.context,
             portal_type='qa Answer',
+<<<<<<< HEAD
             sort_on='points, created',
+=======
+            sort_on='is_approved_answer, points, created',
+>>>>>>> main
             sort_order='ascending',
         )
 
         for answer_item in answers:
             answer = answer_item.getObject()
+<<<<<<< HEAD
             if answer.is_approved_answer():
                 result['activity']['answers'].insert(0, get_answer_fields(answer))
             else:
                 result['activity']['answers'].append(get_answer_fields(answer))
+=======
+            result['activity']['answers'].append(get_answer_fields(answer))
+>>>>>>> main
 
         for comment in self.context.listFolderContents(contentFilter={"portal_type": "qa Comment"}):
             result['activity']['comments'].append(get_comment_fields(comment))
