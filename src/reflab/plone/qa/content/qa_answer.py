@@ -93,7 +93,7 @@ class QaAnswer(Container):
     def is_approved_answer(self):
         parent = self.aq_parent
         approved_answer = None
-        if hasattr(parent, 'approved_answer'):
+        if hasattr(parent, 'approved_answer') and parent.approved_answer:
             approved_answer = parent.approved_answer.to_object
 
         return self == approved_answer
