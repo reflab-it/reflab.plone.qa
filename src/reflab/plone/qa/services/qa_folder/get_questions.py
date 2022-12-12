@@ -51,7 +51,7 @@ class Questions(object):
         sort_by_indexes_map = {
             'by_date': 'created',
             'by_activity': 'last_activity_at',
-            'by_answers': 'answer_count',
+            'by_answer': 'answer_count',
             'by_votes': 'points',
         }
         if sort_by:
