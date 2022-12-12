@@ -54,8 +54,7 @@ class Content(Service):
 
         # create comment or response
         if _type == "question":
-            obj = api.content.find(context=self.context, id=_parent_id)
-            folder = obj[0].getObject()
+            folder = self.context
             try:
                 _title = data.get("title")
                 if _title is None or _title == "" or len(_title) < 3:
