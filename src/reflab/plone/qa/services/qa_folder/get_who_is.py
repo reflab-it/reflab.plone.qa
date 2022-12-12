@@ -52,9 +52,9 @@ class WhoIs(object):
             portal_type='qa Question',
             Creator=userfolder.Title()
         )
-        result['who-is']['answers'] = [get_question_fields(q) for q in questions]
-        result['status'] = 'ok'
-        result['message'] = ''
+        #result['who-is']['answers'] = [get_question_fields(q) for q in questions]
+        result['who-is']['status'] = 'ok'
+        result['who-is']['message'] = ''
         return result
 
 
