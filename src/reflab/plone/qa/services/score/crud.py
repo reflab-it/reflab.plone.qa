@@ -140,13 +140,17 @@ class VoteInfo(Service):
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
-            vote_up = userid in self.context.voted_down_by
-            vote_down = userid in self.context.voted_down_by
+            voted_up_by = self.context.voted_up_by
+            voted_down_by = self.context.voted_down_by
+            voted_up = userid in voted_up_by
+            voted_down = userid in voted_down_by
             return {
                 'status': 'ok',
-                'vote_up': vote_up,
-                'vote_down': vote_down,
-                'count': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
+                'voted_up': voted_up,
+                'voted_down': voted_down,
+                'votes_up': len(voted_up_by),
+                'votes_down': len(voted_down_by),
+                'score': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
             }
         else:
             return {

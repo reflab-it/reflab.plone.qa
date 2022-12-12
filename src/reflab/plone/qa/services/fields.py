@@ -103,8 +103,18 @@ def get_question_fields(item, is_preview=False):
 
     if not is_preview:
         result['text'] = obj.text and obj.text.output_relative_to(obj) or ''
-        result['vote_up_count'] = obj.voted_up_count(),
-        result['vote_down_count'] = obj.voted_down_count(),
+        result['vote_up_count'] = obj.voted_up_count()
+        result['vote_down_count'] = obj.voted_down_count()
+        result['voted_up_by'] = []
+        result['voted_down_by'] = []
+        for username in obj.voted_up_by:
+            result['voted_up_by'].append(
+                get_user_fields(username, qa_folder)
+            )
+        for username in obj.voted_down_by:
+            result['voted_down_by'].append(
+                get_user_fields(username, qa_folder)
+            )
 
     return result
 
@@ -113,7 +123,7 @@ def get_answer_fields(item):
     comments = [get_comment_fields(c) for c in item.listFolderContents(contentFilter={"portal_type": "qa Comment"})]
     author = item.creators and item.creators[0] or 'REMOVED USER'
     qa_folder = item.aq_parent.aq_parent
-    return {
+    result = {
         'id': item.id,
         # 'title': item.title,
         # 'description': item.description,
@@ -138,6 +148,20 @@ def get_answer_fields(item):
         'comments': comments,
         'hasComments': len(comments) > 0,
     }
+
+    result['voted_up_by'] = []
+    result['voted_down_by'] = []
+    for username in item.voted_up_by:
+        result['voted_up_by'].append(
+            get_user_fields(username, qa_folder)
+        )
+    for username in item.voted_down_by:
+        result['voted_down_by'].append(
+            get_user_fields(username, qa_folder)
+        )
+
+
+    return result
 
 
 def get_comment_fields(item):
