@@ -53,7 +53,8 @@ class WhoIs(object):
             Creator=userfolder.Title()
         )
         result['who-is']['answers'] = [get_question_fields(q) for q in questions]
-
+        result['status'] = 'ok'
+        result['message'] = ''
         return result
 
 
