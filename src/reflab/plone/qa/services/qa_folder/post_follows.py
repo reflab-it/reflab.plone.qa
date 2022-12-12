@@ -25,7 +25,7 @@ class Follows(Service):
         data = {"result": {"code": None, "data": None}}
         invalid_response = {"status": "error", "message": "invalid data"}
         _passed_tag = None
-        _data_is_valid = True
+        _data_is_valid = None
         user_name = None
 
         post_data = self.request["BODY"] or None
@@ -39,6 +39,7 @@ class Follows(Service):
         user_name = api.user.get_current().getUserName()
         data = json.loads(post_data)
         _passed_tag = data.get("tag")
+        _method = data.get("method")
         if _passed_tag in all_valid_tags:
             qa_folder = self.context
             with api.env.adopt_roles(roles=['Manager']):
@@ -46,9 +47,17 @@ class Follows(Service):
                 if user_settings is None:
                     alsoProvides(self.request, IDisableCSRFProtection)
                     user_settings = create_user_settings(user_name, qa_folder)
-                    followed_tags = getattr(user_settings, 'followed_tags', [])
+
+                followed_tags = getattr(user_settings, 'followed_tags', [])
+                if _method == 'ADD':
                     if _passed_tag not in followed_tags:
-                        user_settings.followed_tags.append(_passed_tag)
+                        followed_tags.append(_passed_tag)
+                        user_settings.followed_tags = followed_tags 
+                        _data_is_valid = True
+                if _method == 'REMOVE':
+                    if _passed_tag in followed_tags:
+                        followed_tags.remove(_passed_tag)
+                        user_settings.followed_tags = followed_tags 
                         _data_is_valid = True
         if _data_is_valid is not True:
             return invalid_response
