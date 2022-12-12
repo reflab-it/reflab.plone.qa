@@ -14,50 +14,46 @@ class Follow(Service):
 
         response = {"status": "", "msg": "", "data": {}}
 
-        try:
-            # getting user by session
-            username = api.user.get_current().getUserName()
-            # but getting action from posted data
-            post_data = self.request["BODY"] or None
-            data = json.loads(post_data)
-            tmp = None  # reference array
-            if data["action"] == "add":
-                if username not in self.context.followed_by:
-                    tmp = self.context.followed_by.copy()
-                    tmp.append(username)
-                    self.context.followed_by = tmp
+        # getting user by session
+        username = api.user.get_current().getUserName()
+        # but getting action from posted data
+        post_data = self.request["BODY"] or None
+        data = json.loads(post_data)
+        tmp = []  # reference array
 
-                    response["status"] = "ok"
-                    response["msg"] = "added"
-                else:
-                    response["status"] = "ok"
-                    response["msg"] = "added"
+        if data["action"] == "add":
+            if username not in self.context.followed_by:
+                tmp = self.context.followed_by.copy()
+                tmp.append(username)
+                self.context.followed_by = tmp
+                self.context.reindexObject(idxs=['followed_by', 'followed_count'])
 
-            elif data["action"] == "remove":
-                if username in self.context.followed_by:
-                    tmp = self.context.followed_by.copy()
-                    tmp.remove(username)
-                    self.context.followed_by = tmp
-
-                    response["status"] = "ok"
-                    response["msg"] = "removed"
-                else:
-
-                    response["status"] = "ok"
-                    response["msg"] = "not in"
-
+                response["status"] = "ok"
+                response["msg"] = "added"
             else:
-                response["status"] = "error"
-                response["msg"] = "wrong method"
+                response["status"] = "ok"
+                response["msg"] = "added"
 
-            # returns
-            response["data"]["followers"] = tmp
-            response["data"]["count"] = len(tmp)
-            return response
+        elif data["action"] == "remove":
+            if username in self.context.followed_by:
+                tmp = self.context.followed_by.copy()
+                tmp.remove(username)
+                self.context.followed_by = tmp
+                self.context.reindexObject(idxs=['followed_by', 'followed_count'])
 
-        except Exception as e:
-            return {
-                "status": "error",
-                "msg": str(e),
-                "data": {"followers": tmp, "count": len(tmp)},
-            }
+                response["status"] = "ok"
+                response["msg"] = "removed"
+            else:
+
+                response["status"] = "ok"
+                response["msg"] = "not in"
+
+        else:
+            response["status"] = "error"
+            response["msg"] = "wrong method"
+
+        # returns
+        response["data"]["followers"] = tmp
+        response["data"]["count"] = tmp
+        return response
+
