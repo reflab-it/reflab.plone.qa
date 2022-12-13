@@ -121,6 +121,14 @@
     />
 
   <plone:service
+    method="POST"
+    factory=".post_follows.Follows"
+    for="zope.interface.Interface"
+    name="@insert_tag_follower"
+    permission="zope2.View"
+    />
+
+  <plone:service
     method="GET"
     factory=".get_who_i_am.WhoIamGet"
     for="...content.qa_folder.IQaFolder"
