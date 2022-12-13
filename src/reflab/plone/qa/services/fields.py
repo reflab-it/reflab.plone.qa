@@ -107,14 +107,14 @@ def get_question_fields(item, is_preview=False):
         result['vote_down_count'] = obj.voted_down_count()
         result['voted_up_by'] = []
         result['voted_down_by'] = []
-        for username in obj.voted_up_by:
-            result['voted_up_by'].append(
-                get_user_fields(username, qa_folder)
-            )
-        for username in obj.voted_down_by:
-            result['voted_down_by'].append(
-                get_user_fields(username, qa_folder)
-            )
+        #for username in obj.voted_up_by:
+        #    result['voted_up_by'].append(
+        #        get_user_fields(username, qa_folder)
+        #    )
+        #for username in obj.voted_down_by:
+        #    result['voted_down_by'].append(
+        #        get_user_fields(username, qa_folder)
+        #    )
 
     return result
 
@@ -151,14 +151,14 @@ def get_answer_fields(item):
 
     result['voted_up_by'] = []
     result['voted_down_by'] = []
-    for username in item.voted_up_by:
-        result['voted_up_by'].append(
-            get_user_fields(username, qa_folder)
-        )
-    for username in item.voted_down_by:
-        result['voted_down_by'].append(
-            get_user_fields(username, qa_folder)
-        )
+    #for username in item.voted_up_by:
+    #    result['voted_up_by'].append(
+    #        get_user_fields(username, qa_folder)
+    #    )
+    #for username in item.voted_down_by:
+    #    result['voted_down_by'].append(
+    #        get_user_fields(username, qa_folder)
+    #    )
 
 
     return result

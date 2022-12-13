@@ -6,6 +6,9 @@ from zope.component import adapter
 from zope.interface import Interface
 from zope.interface import implementer
 from zope.interface import alsoProvides
+from ..fields import get_user_fields
+from ...content.qa_answer import IQaAnswer
+from ...content.qa_question import IQaQuestion
 import plone.protect.interfaces
 
 @implementer(IExpandableElement)
@@ -56,7 +59,6 @@ class VoteUp(Service):
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
-        #import pdb; pdb.set_trace()
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
@@ -100,7 +102,6 @@ class VoteDown(Service):
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
-        #import pdb; pdb.set_trace()
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
@@ -138,6 +139,13 @@ class VoteDown(Service):
 class VoteInfo(Service):
 
     def reply(self):
+        if IQaQuestion.providedBy(self.context):
+            qa_folder = self.context.aq_parent
+        elif IQaAnswer.providedBy(self.context):
+            qa_folder = self.context.aq_parent.aq_parent
+        else:
+            raise KeyError('invalid parent')
+
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
@@ -148,14 +156,21 @@ class VoteInfo(Service):
             voted_down_by = self.context.voted_down_by
             voted_up = userid in voted_up_by
             voted_down = userid in voted_down_by
+            voted_up_by_list = []
+            voted_down_by_list = []
+            for username in voted_up_by:
+                voted_up_by_list.append(get_user_fields(username, qa_folder))
+            for username in voted_down_by:
+                voted_down_by_list.append(get_user_fields(username, qa_folder))
+
             return {
                 'status': 'ok',
                 'voted_up': voted_up,
                 'voted_down': voted_down,
                 'votes_up': len(voted_up_by),
                 'votes_down': len(voted_down_by),
-                'voted_up_by': voted_up_by,
-                'voted_down_by': voted_down_by,
+                'voted_up_by': voted_up_by_list,
+                'voted_down_by': voted_down_by_list,
                 'score': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
             }
         else:
