@@ -154,6 +154,8 @@ class VoteInfo(Service):
                 'voted_down': voted_down,
                 'votes_up': len(voted_up_by),
                 'votes_down': len(voted_down_by),
+                'voted_up_by': voted_up_by,
+                'voted_down_by': voted_down_by,
                 'score': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
             }
         else:
