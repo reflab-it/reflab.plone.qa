@@ -44,4 +44,12 @@
     permission="zope2.View"
     />
 
+  <plone:service
+    method="GET"
+    for="...content.qa_question.IQaAnswer"
+    factory=".crud.VoteInfo"
+    name="@vote-info"
+    permission="zope2.View"
+    />
+
 </configure>
