@@ -47,30 +47,6 @@ class Vote(object):
         # return data
         return result
 
-def remove_and_add_if_need(item, first_data_set, second_data_set):
-    action = ''
-    first_modifid = False
-    second_modifid = False
-    if item in first_data_set:
-        first_data_set.remove(item)
-        action = "updated"
-        first_modifid = True
-    else:
-        if item not in second_data_set:
-            second_data_set.append(item)
-            action = "added"
-            second_modifid = True
-        else:
-            action = 'already'
-    resp = {
-        'action': action,
-        'first_data_set': None,
-        'second_data_set': None
-    }
-    if first_modifid: resp['first_data_set'] = first_data_set
-    if second_modifid: resp['second_data_set'] = second_data_set
-    return resp
-
 class VoteUp(Service):
 
     def reply(self):
@@ -84,17 +60,30 @@ class VoteUp(Service):
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
-            result = remove_and_add_if_need(userid, self.context.voted_down_by, self.context.voted_up_by)
-            if result['first_data_set'] is not None:
-                self.context.voted_down_by = result['first_data_set']
-                self.context.reindexObject(idxs=['voted_down_by'])
-            if result['second_data_set'] is not None:
-                self.context.voted_up_by = result['second_data_set']
-                self.context.reindexObject(idxs=['voted_up_by'])
+            if userid in self.context.voted_down_by:
+                # user has voted down, can't vote up
+                return {
+                    'status': 'error',
+                    'message': 'unable to vote up',
+                    'action': 'none'
+                }
+            tmp_arr = self.context.voted_up_by
+            action = ''
+            if userid in self.context.voted_up_by:
+                # user remove its vote
+                tmp_arr.remove(userid)
+                action = 'removed'
+            else:
+                # user add its vote
+                tmp_arr.append(userid)
+                action = 'upvoted'
+            # update 
+            self.context.voted_up_by = tmp_arr
+            self.context.reindexObject(idxs=['voted_up_by'])
             return {
                 'status': 'ok',
-                'message': result['action'],
-                'count': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
+                'action': action,
+                'message': ''
             }
         else:
             return {
@@ -111,26 +100,41 @@ class VoteDown(Service):
         tmp = Vote(self.context, self.request)
         res = tmp(expand=True)['vote']
         userid = None
+        #import pdb; pdb.set_trace()
         if 'userid' in res:
             userid = res['userid']
         if userid is not None:
-            result = remove_and_add_if_need(userid, self.context.voted_up_by, self.context.voted_down_by)
-            if result['first_data_set'] is not None:
-                self.context.voted_up_by = result['first_data_set']
-                self.context.reindexObject(idxs=['voted_up_by'])
-            if result['second_data_set'] is not None:
-                self.context.voted_down_by = result['second_data_set']
-                self.context.reindexObject(idxs=['voted_down_by'])
+            if userid in self.context.voted_up_by:
+                # user has voted down, can't vote up
+                return {
+                    'status': 'error',
+                    'message': 'unable to vote down',
+                    'action': 'none'
+                }
+            tmp_arr = self.context.voted_down_by
+            action = ''
+            if userid in self.context.voted_down_by:
+                # user remove its vote
+                tmp_arr.remove(userid)
+                action = 'removed'
+            else:
+                # user add its vote
+                tmp_arr.append(userid)
+                action = 'downvoted'
+            # update 
+            self.context.voted_down_by = tmp_arr
+            self.context.reindexObject(idxs=['voted_down_by'])
             return {
                 'status': 'ok',
-                'message': result['action'],
-                'count': int(len(self.context.voted_up_by)) - int(len(self.context.voted_down_by))
+                'action': action,
+                'message': ''
             }
         else:
             return {
                 'status': 'error',
                 'message': 'invalid suer'
             }
+
 class VoteInfo(Service):
 
     def reply(self):
