@@ -13,18 +13,19 @@ from .content.qa_folder import IQaFolder
 # This for having a translation in the collections
 _FIELD_LABEL['answer_count'] = _('Question answers')
 _FIELD_LABEL['view_count'] = _('Question views')
-_FIELD_LABEL['favorite_count'] = _('Question favorites')
 _FIELD_LABEL['followed_count'] = _('Question followers')
 _FIELD_LABEL['last_activity_at'] = _('Question last activity date')
 _FIELD_LABEL['has_approved_answer'] = _('Question has approved answer')
 _FIELD_LABEL['followed_by'] = _('Question followed by')
 _FIELD_LABEL['voted_up_count'] = _('Votes up')
 _FIELD_LABEL['voted_down_count'] = _('Votes down')
-_FIELD_LABEL['points'] = _('Points')
+_FIELD_LABEL['points'] = _('Score')
 _FIELD_LABEL['comment_count'] = _('Comments')
 _FIELD_LABEL['voted_up_by'] = _('Voted up by')
 _FIELD_LABEL['voted_down_by'] = _('Voted down by')
 _FIELD_LABEL['is_approved_answer'] = _('Is approved answer')
+_FIELD_LABEL['last_activity_by'] = _('Last activity by')
+_FIELD_LABEL['last_activity_what'] = _('Last activity what')
 
 
 @implementer(IVocabularyFactory)
