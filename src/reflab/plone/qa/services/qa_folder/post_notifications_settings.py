@@ -12,11 +12,8 @@ from plone.protect.interfaces import IDisableCSRFProtection
 from ...helpers import get_user_settings
 from ...helpers import create_user_settings
 
-
-from ...content.qa_answer import IQaAnswer
-
-notification_frequency_on_followed_tags_valid_values = ['Weekly', 'Daily', 'Never']
-notification_frequency_on_followed_questions_valid_values = ['Hourly', 'Never']
+from ...content.qa_user_settings import frequency_on_followed_questions_values
+from ...content.qa_user_settings import frequency_on_followed_tags_values
 
 class NotificationsSettingsPost(Service):
 
@@ -51,8 +48,8 @@ class NotificationsSettingsPost(Service):
             if user_settings is None:
                 alsoProvides(self.request, IDisableCSRFProtection)
                 user_settings = create_user_settings(username, qa_folder)
-            if on_tags_frequency in notification_frequency_on_followed_tags_valid_values \
-                and on_questions_frequency in notification_frequency_on_followed_questions_valid_values:
+            if on_tags_frequency in frequency_on_followed_tags_values \
+                and on_questions_frequency in frequency_on_followed_questions_values:
                 setattr(user_settings, 'notification_frequency_on_followed_tags', on_tags_frequency)
                 setattr(user_settings, 'notification_frequency_on_followed_questions', on_questions_frequency)
             else:
