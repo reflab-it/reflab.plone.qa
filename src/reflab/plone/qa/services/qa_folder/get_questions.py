@@ -97,7 +97,7 @@ class Questions(object):
         result["questions"]['status'] = 'ok'
         result["questions"]['questions'] = results
         result["questions"]['total_questions'] = len(items)
-        result["questions"]['page'] = int((end_at + 1) / (end_at - start_at))
+        result["questions"]['page'] = int((end_at + 1) / 10)
 
         return result
 
