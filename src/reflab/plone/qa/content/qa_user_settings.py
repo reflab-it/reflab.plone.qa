@@ -8,7 +8,7 @@ from plone.app.z3cform.widget import SelectFieldWidget
 
 from .. import _
 frequency_on_followed_tags_values = [u'Weekly', u'Daily', u'Never']
-frequency_on_followed_questions_values = [u'Hourly', u'Never']
+frequency_on_followed_questions_values = [u'Instantly', u'Never']
 
 
 class IQAUserSettings(model.Schema):
@@ -44,7 +44,7 @@ class IQAUserSettings(model.Schema):
     notification_frequency_on_followed_questions = schema.Choice(
         title=u'Notification frequency on followed questions',
         values=frequency_on_followed_questions_values,
-        default='Hourly',
+        default='Instantly',
         required=True,
     )
 

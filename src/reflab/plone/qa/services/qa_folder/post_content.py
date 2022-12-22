@@ -137,5 +137,5 @@ class Content(Service):
             response["status"] = "error"
             response["message"] = "unable to created, wrong type"
 
-        response["id"] = res.id or None
+        response["id"] = res.id if res else None
         return response
