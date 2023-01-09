@@ -36,7 +36,8 @@ class Questions(object):
             portal_type='qa Question',
             path='/'.join(self.context.getPhysicalPath()),
             sort_on='created',
-            sort_order='descending'
+            sort_order='descending',
+            review_state=['published', 'closed']
         )
 
         sort_order = self.request.get('sort_order', None)

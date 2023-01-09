@@ -3,6 +3,7 @@ from plone.memoize import ram
 from time import time
 
 from ..helpers import get_user_settings
+from ..helpers import can_user_delete
 from ..vocabularies import QuestionSubjectsVocabularyFactory
 from ..content.qa_answer import IQaAnswer
 
@@ -107,14 +108,11 @@ def get_question_fields(item, is_preview=False):
         result['vote_down_count'] = obj.voted_down_count()
         result['voted_up_by'] = []
         result['voted_down_by'] = []
-        #for username in obj.voted_up_by:
-        #    result['voted_up_by'].append(
-        #        get_user_fields(username, qa_folder)
-        #    )
-        #for username in obj.voted_down_by:
-        #    result['voted_down_by'].append(
-        #        get_user_fields(username, qa_folder)
-        #    )
+        result['can_delete'] = can_user_delete(obj)
+        result['attachments'] = []
+
+        for attachment in obj.listFolderContents(contentFilter={"portal_type": "File"}):
+            result['attachments'].append(get_attachment_fields(attachment))
 
     return result
 
@@ -147,19 +145,16 @@ def get_answer_fields(item):
         'vote_count': item.points(),
         'comments': comments,
         'hasComments': len(comments) > 0,
+        'can_delete': can_user_delete(item),
     }
+
+    result['attachments'] = []
+
+    for attachment in item.listFolderContents(contentFilter={"portal_type": "File"}):
+        result['attachments'].append(get_attachment_fields(attachment))
 
     result['voted_up_by'] = []
     result['voted_down_by'] = []
-    #for username in item.voted_up_by:
-    #    result['voted_up_by'].append(
-    #        get_user_fields(username, qa_folder)
-    #    )
-    #for username in item.voted_down_by:
-    #    result['voted_down_by'].append(
-    #        get_user_fields(username, qa_folder)
-    #    )
-
 
     return result
 
@@ -172,8 +167,6 @@ def get_comment_fields(item):
 
     return {
         'id': item.id,
-        # 'title': item.title,
-        # 'description': item.description,
         'author': get_user_fields(author, qa_folder),
         'text': item.text,
         'deleted': api.content.get_state(item) == 'deleted',
@@ -184,7 +177,15 @@ def get_comment_fields(item):
         },
         'link': item.absolute_url(),
         'rel': item.absolute_url(1),
-        # 'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
         'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
-        # 'view_count': int(len(item.viewed_by)),
+        'can_delete': can_user_delete(item),
+    }
+
+
+def get_attachment_fields(item):
+    return {
+        'title': item.Title(),
+        'size': item.get_size(),
+        'filename': item.file.filename,
+        'file_type': item.file.contentType,
     }

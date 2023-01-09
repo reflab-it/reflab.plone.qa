@@ -6,22 +6,22 @@
   <adapter
       factory=".get_activity.Activity"
       name="activity"
-      />  
+      />
 
   <adapter
       factory=".get_followers.Followers"
       name="followers"
-      />       
+      />
 
   <adapter
       factory=".get_related.Related"
       name="related"
-      />      
+      />
 
   <adapter
       factory=".get_stats.Stats"
       name="stats"
-      />  
+      />
 
   <!-- TODO: rename this in '@activity' -->
   <plone:service
@@ -31,7 +31,7 @@
       permission="zope2.View"
       name="@related-objects"
       />
-   
+
   <!-- TODO: rename this in '@followers' -->
   <plone:service
       method="GET"
@@ -40,7 +40,7 @@
       permission="zope2.View"
       name="@get-followers"
       />
-   
+
   <!-- TODO: rename this in '@related' -->
   <plone:service
       method="GET"
@@ -48,23 +48,30 @@
       for="...content.qa_question.IQaQuestion"
       permission="zope2.View"
       name="@get-similars"
-      />   
+      />
 
   <!-- TODO: rename this in '@stats' -->
   <plone:service
-    method="GET"
-    for="...content.qa_question.IQaQuestion"
-    factory=".get_stats.StatsGet"
-    name="@get-question-stat"
-    permission="zope2.View"
-    />
+      method="GET"
+      for="...content.qa_question.IQaQuestion"
+      factory=".get_stats.StatsGet"
+      name="@get-question-stat"
+      permission="zope2.View"
+      />
 
   <plone:service
-    method="POST"
-    for="...content.qa_question.IQaQuestion"
-    factory=".post_follow.Follow"
-    name="@follow"
-    permission="zope2.View"
-    />
+      method="POST"
+      for="...content.qa_question.IQaQuestion"
+      factory=".post_follow.Follow"
+      name="@follow"
+      permission="zope2.View"
+      />
+
+  <plone:service
+      method="DELETE"
+      factory=".delete_question.QuestionDelete"
+      for="...content.qa_question.IQaQuestion"
+      permission="zope2.View"
+      />
 
 </configure>

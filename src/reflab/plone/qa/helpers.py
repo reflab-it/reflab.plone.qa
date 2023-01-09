@@ -101,6 +101,28 @@ def munge_search_term(search_text):
     return r
 
 
+def can_user_delete(obj):
+    """ Check if a given user can delete an object """
+
+    plone_user = user_api.get_current()
+    username = plone_user.getUserName()
+
+    # Only authors can delete own contents
+    if obj.Creator() != username:
+        return False
+
+    # If there are subobject can't delete
+    if obj.listFolderContents(contentFilter={"portal_type": ["qa Comment", "qa Answer"]}):
+        return False
+
+    # If it is a question or answer and has votes can't delete
+    if obj.portal_type in ["qa Comment", "qa Answer"]:
+        if obj.points() != 0:
+            return False
+
+    return True
+
+
 def time_profiler(func):
     """This decorator prints the execution time for the decorated function."""
 
