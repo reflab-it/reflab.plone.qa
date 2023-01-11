@@ -5,9 +5,13 @@ from functools import wraps
 from io import StringIO
 from plone.api import content as content_api
 from plone.api import user as user_api
+from plone.api import portal as portal_api
 from markdown import Markdown
 from Products.CMFPlone.browser.search import BAD_CHARS, quote, quote_chars
 from plone.i18n.normalizer import idnormalizer
+from AccessControl import getSecurityManager
+from AccessControl.SecurityManagement import newSecurityManager, setSecurityManager
+from AccessControl.User import Super as BaseUnrestrictedUser
 
 
 logger = logging.getLogger("Plone")
@@ -64,10 +68,14 @@ def create_user_settings(username, qa_folder):
             display_name = ' '.join([fullname, lastname])
 
     if safe_username in settings_folder.objectIds():
-        raise KeyError('User folder alredy exists')
+        raise KeyError('User folder already exists')
 
-    user_folder = content_api.create(
-        settings_folder, 'qa User Settings',
+    logger.info(f'Creating user folder for: {username} with id {safe_username}')
+    user_folder = execute_with_role(
+        'Manager',
+        content_api.create,
+        settings_folder,
+        'qa User Settings',
         id=safe_username,
         display_name=display_name,
         title=username
@@ -135,3 +143,29 @@ def time_profiler(func):
         return result
 
     return wrapper
+
+
+class UnrestrictedUser(BaseUnrestrictedUser):
+    """Unrestricted user that still has an id.
+    """
+    def getId(self):
+        """Return the ID of the user.
+        """
+        return self.getUserName()
+
+
+def execute_with_role(role, function, *args, **kwargs):
+    portal = portal_api.get()
+    sm = getSecurityManager()
+    try:
+        try:
+            tmp_user = UnrestrictedUser(
+                sm.getUser().getId(), '', [role], ''
+            )
+            tmp_user = tmp_user.__of__(portal.acl_users)
+            newSecurityManager(None, tmp_user)
+            return function(*args, **kwargs)
+        except Exception as e:
+            raise e
+    finally:
+        setSecurityManager(sm)
