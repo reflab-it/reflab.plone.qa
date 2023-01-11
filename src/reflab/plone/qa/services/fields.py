@@ -161,10 +161,10 @@ def get_comment_fields(item):
     parent = item.aq_parent
     if IQaAnswer.providedBy(parent):
         qa_folder = parent.aq_parent.aq_parent
-        path = f'{parent.getId()}/{item.getId()}'
+        path = f'{parent.aq_parent.getId()}/{parent.getId()}/{item.getId()}'
     else:
         qa_folder = parent.aq_parent
-        path = f'{parent.aq_parent.getId()}/{parent.getId()}/{item.getId()}'
+        path = f'{parent.getId()}/{item.getId()}'
 
     return {
         'id': item.id,

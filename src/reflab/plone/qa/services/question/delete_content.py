@@ -11,8 +11,6 @@ class ContentDelete(Service):
     """Deletes a QA content"""
 
     def reply(self):
-        import pdb; pdb.set_trace()
-
         if can_user_delete(self.context):
             with env_api.adopt_roles(['Manager']):
                 content_api.delete(obj=self.context, check_linkintegrity=False)
