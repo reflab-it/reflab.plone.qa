@@ -69,8 +69,22 @@
 
   <plone:service
       method="DELETE"
-      factory=".delete_question.QuestionDelete"
+      factory=".delete_content.ContentDelete"
       for="...content.qa_question.IQaQuestion"
+      permission="zope2.View"
+      />
+
+  <plone:service
+      method="DELETE"
+      factory=".delete_content.ContentDelete"
+      for="...content.qa_answer.IQaAnswer"
+      permission="zope2.View"
+      />
+
+  <plone:service
+      method="DELETE"
+      factory=".delete_content.ContentDelete"
+      for="...content.qa_comment.IQaComment"
       permission="zope2.View"
       />
 

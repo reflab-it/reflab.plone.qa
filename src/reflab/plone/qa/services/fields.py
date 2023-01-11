@@ -1,6 +1,7 @@
 from plone import api
 from plone.memoize import ram
 from time import time
+from Products.CMFPlone.utils import human_readable_size
 
 from ..helpers import get_user_settings
 from ..helpers import can_user_delete
@@ -123,8 +124,6 @@ def get_answer_fields(item):
     qa_folder = item.aq_parent.aq_parent
     result = {
         'id': item.id,
-        # 'title': item.title,
-        # 'description': item.description,
         'author': get_user_fields(author, qa_folder),
         'text': item.text and item.text.output_relative_to(item) or '',
         'approved': item.is_approved_answer(),
@@ -134,12 +133,10 @@ def get_answer_fields(item):
             'type': item.Type(),
             'portal_type': item.portal_type
         },
-        'link': item.absolute_url(),
-        'rel': item.absolute_url(1),
-        # 'subs': len(item.items()),
-        # 'last_activity_at': item.last_activity_at and item.last_activity_at.isoformat() or '1976-04-29',
+        # 'link': item.absolute_url(),
+        # 'rel': item.absolute_url(1),
+        'path': f'{item.aq_parent.getId()}/{item.getId()}',
         'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
-        # 'view_count': int(len(item.viewed_by)),
         'vote_up_count': item.voted_up_count(),
         'vote_down_count': item.voted_down_count(),
         'vote_count': item.points(),
@@ -161,9 +158,13 @@ def get_answer_fields(item):
 
 def get_comment_fields(item):
     author = item.creators and item.creators[0] or 'REMOVED USER'
-    qa_folder = item.aq_parent
-    if IQaAnswer.providedBy(qa_folder):
-        qa_folder = item.aq_parent
+    parent = item.aq_parent
+    if IQaAnswer.providedBy(parent):
+        qa_folder = parent.aq_parent.aq_parent
+        path = f'{parent.getId()}/{item.getId()}'
+    else:
+        qa_folder = parent.aq_parent
+        path = f'{parent.aq_parent.getId()}/{parent.getId()}/{item.getId()}'
 
     return {
         'id': item.id,
@@ -175,8 +176,9 @@ def get_comment_fields(item):
             'type': item.Type(),
             'portal_type': item.portal_type
         },
-        'link': item.absolute_url(),
-        'rel': item.absolute_url(1),
+        # 'link': item.absolute_url(),
+        # 'rel': item.absolute_url(1),
+        'path': path,
         'added_at': item.created() and item.created().asdatetime().isoformat() or '1976-04-29',
         'can_delete': can_user_delete(item),
     }
@@ -185,7 +187,9 @@ def get_comment_fields(item):
 def get_attachment_fields(item):
     return {
         'title': item.Title(),
-        'size': item.get_size(),
+        'size': human_readable_size(item.get_size()),
         'filename': item.file.filename,
         'file_type': item.file.contentType,
+        'url': item.absolute_url() + '/download',
+        'id': item.getId()
     }
