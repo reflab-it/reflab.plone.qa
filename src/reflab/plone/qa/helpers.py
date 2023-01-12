@@ -13,6 +13,7 @@ from AccessControl import getSecurityManager
 from AccessControl.SecurityManagement import newSecurityManager, setSecurityManager
 from AccessControl.User import Super as BaseUnrestrictedUser
 
+from .content.qa_answer import IQaAnswer
 
 logger = logging.getLogger("Plone")
 
@@ -129,6 +130,30 @@ def can_user_delete(obj):
             return False
 
     return True
+
+
+def is_question_open(obj):
+    return content_api.get_state(obj) == 'published'
+
+
+def can_user_answer(obj):
+    return True if is_question_open(obj) else False
+
+
+def can_user_comment(obj):
+    if IQaAnswer.providedBy(obj):
+        question = obj.aq_parent
+    else:
+        question = obj
+    return True if is_question_open(question) else False
+
+
+def can_user_vote(obj):
+    if IQaAnswer.providedBy(obj):
+        question = obj.aq_parent
+    else:
+        question = obj
+    return True if is_question_open(question) else False
 
 
 def time_profiler(func):

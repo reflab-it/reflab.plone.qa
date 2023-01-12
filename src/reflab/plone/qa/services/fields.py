@@ -5,6 +5,10 @@ from Products.CMFPlone.utils import human_readable_size
 
 from ..helpers import get_user_settings
 from ..helpers import can_user_delete
+from ..helpers import can_user_answer
+from ..helpers import can_user_comment
+from ..helpers import can_user_vote
+from ..helpers import is_question_open
 from ..vocabularies import QuestionSubjectsVocabularyFactory
 from ..content.qa_answer import IQaAnswer
 
@@ -83,6 +87,10 @@ def get_question_fields(item, is_preview=False):
         'comment_count': obj.commment_count(),
         'vote_count': obj.points(),
         'tags': tags,
+        'is_open': is_question_open(obj),
+        'can_answer': can_user_answer(obj),
+        'can_comment': can_user_comment(obj),
+        'can_vote': can_user_vote(obj),
     }
 
     if item is not None:
@@ -143,6 +151,8 @@ def get_answer_fields(item):
         'comments': comments,
         'hasComments': len(comments) > 0,
         'can_delete': can_user_delete(item),
+        'can_comment': can_user_comment(item),
+        'can_vote': can_user_vote(item),
     }
 
     result['attachments'] = []
