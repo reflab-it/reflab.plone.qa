@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from AccessControl import Unauthorized
 from plone import api
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
@@ -9,6 +10,7 @@ from zope.interface import alsoProvides
 from ..fields import get_user_fields
 from ...content.qa_answer import IQaAnswer
 from ...content.qa_question import IQaQuestion
+from ...helpers import can_user_vote
 import plone.protect.interfaces
 
 @implementer(IExpandableElement)
@@ -37,7 +39,7 @@ class Vote(object):
             try:
                 user_data = api.user.get_current()
                 uid = user_data.id
-            except:
+            except Exception:
                 status = 'error'
 
         result = {
@@ -79,7 +81,9 @@ class VoteUp(Service):
                 # user add its vote
                 tmp_arr.append(userid)
                 action = 'upvoted'
-            # update 
+            # update
+            if not can_user_vote(self.context):
+                raise Unauthorized("User can't vote")
             self.context.voted_up_by = tmp_arr
             self.context.reindexObject(idxs=['voted_up_by'])
             return {
@@ -122,7 +126,9 @@ class VoteDown(Service):
                 # user add its vote
                 tmp_arr.append(userid)
                 action = 'downvoted'
-            # update 
+            # update
+            if not can_user_vote(self.context):
+                raise Unauthorized("User can't vote")
             self.context.voted_down_by = tmp_arr
             self.context.reindexObject(idxs=['voted_down_by'])
             return {

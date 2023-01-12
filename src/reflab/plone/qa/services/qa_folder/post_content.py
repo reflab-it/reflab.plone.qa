@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from AccessControl import Unauthorized
 from plone import api
 from plone.restapi.services import Service
 from zope.interface import alsoProvides
@@ -9,6 +10,8 @@ import json
 import uuid
 
 from ...content.qa_answer import IQaAnswer
+from ...helpers import can_user_answer
+from ...helpers import can_user_comment
 
 
 class Content(Service):
@@ -85,6 +88,8 @@ class Content(Service):
             try:
                 obj = api.content.find(context=self.context, id=_parent_id)
                 parent = obj[0].getObject()
+                if not can_user_comment(parent):
+                    raise Unauthorized("User can't add a comment")
                 res = api.content.create(
                     container=parent,
                     type="qa Comment",
@@ -113,6 +118,8 @@ class Content(Service):
             obj = api.content.find(context=self.context, id=_parent_id)
             question = obj[0].getObject()
             try:
+                if not can_user_answer(question):
+                    raise Unauthorized("User can't add an answer")
                 res = api.content.create(
                     container=question,
                     type="qa Answer",
