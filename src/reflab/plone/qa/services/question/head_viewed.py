@@ -17,5 +17,4 @@ class ViewedHead(Service):
                 viewed_by.append(username)
                 setattr(self.context, 'viewed_by', viewed_by)
                 self.context.reindexObject(idxs=['view_count'])
-        logger.info(f'User {username} viewed {self.context.absolute_url()}')
         return self.reply_no_content()

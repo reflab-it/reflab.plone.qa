@@ -28,7 +28,7 @@ class IQaQuestion(model.Schema):
     fieldset(
         'activity',
         label=u'Activity',
-        fields=('creators', 'approved_answer',
+        fields=('creators', 'approved_answer', 'message',
                 'followed_by', 'voted_up_by',
                 'voted_down_by', 'viewed_by')
     )
@@ -68,6 +68,14 @@ class IQaQuestion(model.Schema):
     )
 
     directives.widget(approved_answer=SelectFieldWidget)
+
+    directives.read_permission(message='cmf.ReviewPortalContent')
+    directives.write_permission(message='cmf.ReviewPortalContent')
+    message = schema.TextLine(
+        title=_('label_qa_question_message', default='Message'),
+        description=_('help_qa_question_message', default='A specifc text to display when the question is closed'),
+        required=False
+    )
 
     directives.read_permission(creators='cmf.ReviewPortalContent')
     directives.write_permission(creators='cmf.ReviewPortalContent')

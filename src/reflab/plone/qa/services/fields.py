@@ -2,6 +2,7 @@ from plone import api
 from plone.memoize import ram
 from time import time
 from Products.CMFPlone.utils import human_readable_size
+from Products.CMFCore.WorkflowCore import WorkflowException
 
 from ..helpers import get_user_settings
 from ..helpers import can_user_delete
@@ -83,6 +84,7 @@ def get_question_fields(item, is_preview=False):
         'approved_answer_user': {},
         'subs': obj.answer_count(),
         'added_at': obj.created() and obj.created().asdatetime().isoformat() or '1976-04-29',
+        'closed_at': None,
         'view_count': obj.view_count(),
         'comment_count': obj.commment_count(),
         'vote_count': obj.points(),
@@ -91,7 +93,19 @@ def get_question_fields(item, is_preview=False):
         'can_answer': can_user_answer(obj),
         'can_comment': can_user_comment(obj),
         'can_vote': can_user_vote(obj),
+        'message': obj.message,
     }
+
+    if not result['is_open']:
+        workflow_tool = api.portal.get_tool('portal_workflow')
+        try:
+            review_history = workflow_tool.getInfoFor(obj, "review_history")
+        except WorkflowException:
+            review_history = []
+
+        if review_history:
+            last_transition_time = review_history[-1]['time']
+            result['closed_at'] = last_transition_time.asdatetime().isoformat()
 
     if item is not None:
         result['last_activity'] = {
