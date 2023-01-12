@@ -88,4 +88,12 @@
       permission="zope2.View"
       />
 
+  <plone:service
+      method="HEAD"
+      factory=".head_viewed.ViewedHead"
+      for="...content.qa_question.IQaQuestion"
+      permission="zope2.View"
+      name="@viewed"
+      />
+
 </configure>
