@@ -14,6 +14,7 @@ from AccessControl.SecurityManagement import newSecurityManager, setSecurityMana
 from AccessControl.User import Super as BaseUnrestrictedUser
 
 from .content.qa_answer import IQaAnswer
+from .content.qa_comment import IQaComment
 
 logger = logging.getLogger("Plone")
 
@@ -112,6 +113,18 @@ def munge_search_term(search_text):
 
 def can_user_delete(obj):
     """ Check if a given user can delete an object """
+    if IQaAnswer.providedBy(obj):
+        question = obj.aq_parent
+    elif IQaComment.providedBy(obj):
+        if IQaAnswer.providedBy(obj.aq_parent):
+            question = obj.aq_parent.aq_parent
+        else:
+            question = obj.aq_parent
+    else:
+        question = obj
+
+    if not is_question_open(question):
+        return False
 
     plone_user = user_api.get_current()
     username = plone_user.getUserName()

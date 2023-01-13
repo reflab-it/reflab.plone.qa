@@ -96,17 +96,6 @@ def get_question_fields(item, is_preview=False):
         'message': obj.message,
     }
 
-    if not result['is_open']:
-        workflow_tool = api.portal.get_tool('portal_workflow')
-        try:
-            review_history = workflow_tool.getInfoFor(obj, "review_history")
-        except WorkflowException:
-            review_history = []
-
-        if review_history:
-            last_transition_time = review_history[-1]['time']
-            result['closed_at'] = last_transition_time.asdatetime().isoformat()
-
     if item is not None:
         result['last_activity'] = {
             'at': item.last_activity_at.asdatetime().isoformat() if item.last_activity_at else None,
@@ -119,6 +108,20 @@ def get_question_fields(item, is_preview=False):
         result['last_activity']['by'] = get_user_fields(result['last_activity']['by'], qa_folder) if result['last_activity']['by'] else None
 
     result['has_activity'] = result['last_activity']['what'] in ['comment', 'answer']
+
+    if not result['is_open']:
+        workflow_tool = api.portal.get_tool('portal_workflow')
+        try:
+            review_history = workflow_tool.getInfoFor(obj, "review_history")
+        except WorkflowException:
+            review_history = []
+
+        if review_history:
+            last_transition_time = review_history[-1]['time']
+            result['closed_at'] = last_transition_time.asdatetime().isoformat()
+        else:
+            # Fallback if not workflow history
+            result['closed_at'] = result.get('last_activity', {}).get('at', None)
 
 
     if result['approved']:
