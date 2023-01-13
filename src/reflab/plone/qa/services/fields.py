@@ -112,7 +112,8 @@ def get_question_fields(item, is_preview=False):
     if not result['is_open']:
         workflow_tool = api.portal.get_tool('portal_workflow')
         try:
-            review_history = workflow_tool.getInfoFor(obj, "review_history")
+            with api.env.adopt_roles(roles=['Manager']):
+                review_history = workflow_tool.getInfoFor(obj, "review_history")
         except WorkflowException:
             review_history = []
 
