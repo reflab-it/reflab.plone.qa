@@ -51,6 +51,19 @@ def get_user_fields(username, qa_folder):
     return _cached_user_fields(username, qa_folder_uid)
 
 
+def get_tags_fields(context, tags):
+    subjects_vocabulary = QuestionSubjectsVocabularyFactory(context)
+    result = []
+    for tag in tags:
+        if tag in subjects_vocabulary:
+            term = subjects_vocabulary.getTerm(tag)
+            result.append({
+                'id': term.value,
+                'name': term.title
+            })
+    return result
+
+
 def get_question_fields(item, is_preview=False):
 
     # A brute way to manage both brain and real objects...
@@ -64,15 +77,15 @@ def get_question_fields(item, is_preview=False):
     author = obj.creators and obj.creators[0] or 'REMOVED USER'
     approved_answer = obj.approved_answer.to_object if obj.approved_answer else None
 
-    subjects_vocabulary = QuestionSubjectsVocabularyFactory(obj)
-    tags = []
-    for tag in obj.subjects:
-        if tag in subjects_vocabulary:
-            term = subjects_vocabulary.getTerm(tag)
-            tags.append({
-                'id': term.value,
-                'name': term.title
-            })
+    # subjects_vocabulary = QuestionSubjectsVocabularyFactory(obj)
+    # tags = []
+    # for tag in obj.subjects:
+    #     if tag in subjects_vocabulary:
+    #         term = subjects_vocabulary.getTerm(tag)
+    #         tags.append({
+    #             'id': term.value,
+    #             'name': term.title
+    #         })
 
     result = {
         '@id': obj.absolute_url(),
@@ -88,7 +101,7 @@ def get_question_fields(item, is_preview=False):
         'view_count': obj.view_count(),
         'comment_count': obj.commment_count(),
         'vote_count': obj.points(),
-        'tags': tags,
+        'tags': get_tags_fields(obj, obj.subjects),
         'is_open': is_question_open(obj),
         'can_answer': can_user_answer(obj),
         'can_comment': can_user_comment(obj),
