@@ -16,6 +16,7 @@ _FIELD_LABEL['view_count'] = _('Question views')
 _FIELD_LABEL['followed_count'] = _('Question followers')
 _FIELD_LABEL['last_activity_at'] = _('Question last activity date')
 _FIELD_LABEL['has_approved_answer'] = _('Question has approved answer')
+_FIELD_LABEL['approved_date'] = _('Question approved answer date')
 _FIELD_LABEL['followed_by'] = _('Question followed by')
 _FIELD_LABEL['voted_up_count'] = _('Votes up')
 _FIELD_LABEL['voted_down_count'] = _('Votes down')
@@ -26,6 +27,7 @@ _FIELD_LABEL['voted_down_by'] = _('Voted down by')
 _FIELD_LABEL['is_approved_answer'] = _('Is approved answer')
 _FIELD_LABEL['last_activity_by'] = _('Last activity by')
 _FIELD_LABEL['last_activity_what'] = _('Last activity what')
+
 
 
 @implementer(IVocabularyFactory)

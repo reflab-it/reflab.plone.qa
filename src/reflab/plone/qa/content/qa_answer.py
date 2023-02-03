@@ -97,3 +97,14 @@ class QaAnswer(Container):
             approved_answer = parent.approved_answer.to_object
 
         return self == approved_answer
+
+    def approved_date(self):
+        date = None
+        if self.is_approved_answer():
+            parent = self.aq_parent
+            if hasattr(parent, 'approved_date'):
+                date = parent.approved_date
+        return date
+
+
+

@@ -28,7 +28,7 @@ class IQaQuestion(model.Schema):
     fieldset(
         'activity',
         label=u'Activity',
-        fields=('creators', 'approved_answer', 'message',
+        fields=('creators', 'approved_answer', 'approved_date', 'message',
                 'followed_by', 'voted_up_by',
                 'voted_down_by', 'viewed_by')
     )
@@ -61,13 +61,18 @@ class IQaQuestion(model.Schema):
     )
 
     # Reviewer fields
+    directives.widget(approved_answer=SelectFieldWidget)
     approved_answer = RelationChoice(
         title=u"Approved Answer",
         vocabulary='reflab.plone.qa.vocabularies.question_answers',
         required=False,
     )
 
-    directives.widget(approved_answer=SelectFieldWidget)
+    approved_date = schema.Date(
+        title=u'Date of answer approval',
+        description=u'Set it only if an answer was approved',
+        required=False,
+    )
 
     directives.read_permission(message='cmf.ReviewPortalContent')
     directives.write_permission(message='cmf.ReviewPortalContent')
