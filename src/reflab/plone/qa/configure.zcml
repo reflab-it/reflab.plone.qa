@@ -44,7 +44,7 @@
 
   <include package=".views" />
 
-  <!-- RichText transformers -->  
+  <!-- RichText transformers -->
   <adapter
       factory=".transform.QATextTransformer"
       for=".content.qa_question.IQaQuestion"
@@ -59,30 +59,36 @@
   <utility
     component=".vocabularies.QuestionAnswersVocabularyFactory"
     name="reflab.plone.qa.vocabularies.question_answers"
-    /> 
+    />
 
   <utility
     component=".vocabularies.QuestionSubjectsVocabularyFactory"
     name="reflab.plone.qa.vocabularies.question_subjects"
-    />         
+    />
 
-  <!-- Indexers -->    
+  <!-- Indexers -->
   <adapter name="Description" factory=".indexers.question_description" />
-  <adapter name="Title" factory=".indexers.answer_title" />  
-  <adapter name="Title" factory=".indexers.comment_title" />  
+  <adapter name="Title" factory=".indexers.answer_title" />
+  <adapter name="Title" factory=".indexers.comment_title" />
 
   <!-- Subscribers -->
+  <subscriber
+      for=".content.qa_question.IQaQuestion
+          zope.lifecycleevent.IObjectModifiedEvent"
+      handler=".subscribers.on_question_modified"
+      />
+
   <subscriber
       for=".content.qa_answer.IQaAnswer
           zope.lifecycleevent.IObjectAddedEvent"
       handler=".subscribers.on_answer_added"
-      />  
+      />
 
   <subscriber
       for=".content.qa_comment.IQaComment
           zope.lifecycleevent.IObjectAddedEvent"
       handler=".subscribers.on_comment_added"
-      />      
+      />
 
 
 </configure>

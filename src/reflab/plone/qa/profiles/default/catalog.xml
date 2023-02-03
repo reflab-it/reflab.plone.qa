@@ -36,6 +36,12 @@
   </index>
   <column value="has_approved_answer"/>
 
+  <index name="approved_date" meta_type="DateIndex">
+    <indexed_attr value="approved_date"/>
+  </index>
+  <column value="approved_date"/>
+
+
   <index name="followed_by" meta_type="KeywordIndex">
     <indexed_attr value="followed_by"/>
   </index>
