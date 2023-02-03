@@ -25,16 +25,22 @@ def on_question_modified(object, event):
     # The date is automatically remove when the approved answer is unset
     # The date is automatically set if the editor does not set it
     approved_answer_changed = False
+    approved_date_changed = False
     for description in event.descriptions:
         if 'approved_answer' in description.attributes:
             approved_answer_changed = True
+        if 'approved_date' in description.attributes:
+            approved_date_changed = True
 
     if approved_answer_changed:
         if object.approved_answer and not object.approved_date:
             object.approved_date = datetime.now().date()
+            approved_date_changed = True
         elif not object.approved_answer:
             object.approved_date = None
+            approved_date_changed = True
 
+    if approved_date_changed:
         for answer in object.listFolderContents(contentFilter={"portal_type": ["qa Answer"]}):
             answer.reindexObject(idxs=['approved_date'])
 
