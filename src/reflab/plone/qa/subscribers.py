@@ -40,9 +40,15 @@ def on_question_modified(object, event):
             object.approved_date = None
             approved_date_changed = True
 
-    if approved_date_changed:
-        for answer in object.listFolderContents(contentFilter={"portal_type": ["qa Answer"]}):
+    if not (approved_date_changed or approved_answer_changed):
+        return
+
+    # Reindex where required
+    for answer in object.listFolderContents(contentFilter={"portal_type": ["qa Answer"]}):
+        if approved_date_changed:
             answer.reindexObject(idxs=['approved_date'])
+        if approved_answer_changed:
+            answer.reindexObject(idxs=['is_approved_answer'])
 
 
 def on_answer_added(object, event):
