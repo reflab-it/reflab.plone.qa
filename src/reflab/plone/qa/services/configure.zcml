@@ -2,6 +2,7 @@
 
   <include package=".qa_folder" />
   <include package=".question" />
+  <include package=".answer" />
   <include package=".score" />
 
 </configure>

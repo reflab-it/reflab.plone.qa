@@ -73,6 +73,9 @@ class Questions(object):
                 query['followed_by'] = api.user.get_current().getUserName()
             if filter_by == 'CLOSED':
                 query['has_approved_answer'] = True
+            if filter_by == 'ANSWERED_NOT_CLOSED':
+                query['has_approved_answer'] = False
+                query['answer_count'] = {"query": 1, "range": "min"}
 
         items = catalog(**query)
 

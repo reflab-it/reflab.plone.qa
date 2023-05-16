@@ -9,6 +9,7 @@ from ..helpers import can_user_delete
 from ..helpers import can_user_answer
 from ..helpers import can_user_comment
 from ..helpers import can_user_vote
+from ..helpers import can_user_approve
 from ..helpers import is_question_open
 from ..vocabularies import QuestionSubjectsVocabularyFactory
 from ..content.qa_answer import IQaAnswer
@@ -182,6 +183,7 @@ def get_answer_fields(item):
         'comments': comments,
         'hasComments': len(comments) > 0,
         'can_delete': can_user_delete(item),
+        'can_approve': can_user_approve(item),
         'can_comment': can_user_comment(item),
         'can_vote': can_user_vote(item),
     }
