@@ -11,4 +11,12 @@
       permission="zope2.View"
       />
 
+  <plone:service
+      method="DELETE"
+      for="...content.qa_answer.IQaAnswer"
+      factory=".del_approve.Approve"
+      name="@approve"
+      permission="zope2.View"
+      />
+
 </configure>

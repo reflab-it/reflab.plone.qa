@@ -162,6 +162,23 @@ def can_user_approve(obj):
 
     return True
 
+def can_user_disapprove(obj):
+    """ Check if the current user can approve an answer """
+    if not IQaAnswer.providedBy(obj):
+        return False
+
+    if not user_api.has_permission('Review portal content', obj=obj):
+        return False
+
+    question = obj.aq_parent
+    if not is_question_open(question):
+        return False
+
+    if question.approved_answer and question.approved_answer.to_object == obj:
+        return True
+
+    return False
+
 def is_question_open(obj):
     return content_api.get_state(obj) == 'published'
 

@@ -10,6 +10,7 @@ from ..helpers import can_user_answer
 from ..helpers import can_user_comment
 from ..helpers import can_user_vote
 from ..helpers import can_user_approve
+from ..helpers import can_user_disapprove
 from ..helpers import is_question_open
 from ..vocabularies import QuestionSubjectsVocabularyFactory
 from ..content.qa_answer import IQaAnswer
@@ -186,6 +187,7 @@ def get_answer_fields(item):
         'can_approve': can_user_approve(item),
         'can_comment': can_user_comment(item),
         'can_vote': can_user_vote(item),
+        'can_disapprove': can_user_disapprove(item)
     }
 
     result['attachments'] = []
